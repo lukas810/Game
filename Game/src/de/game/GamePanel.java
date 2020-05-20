@@ -7,6 +7,10 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
+import de.game.states.GameStateManager;
+import de.game.utils.KeyHandler;
+import de.game.utils.MouseHandler;
+
 @SuppressWarnings("serial")
 public class GamePanel extends JPanel implements Runnable {
 
@@ -14,9 +18,15 @@ public class GamePanel extends JPanel implements Runnable {
 	public static final int HEIGHT = 500;
 
 	private Thread thread;
+	private boolean running = false;
+	
 	private BufferedImage img;
 	private Graphics2D g;
-	private boolean running = false;
+	
+	private MouseHandler mouse;
+	private KeyHandler key;
+	
+	private GameStateManager gsm;
 
 	public GamePanel() {
 		setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -28,6 +38,11 @@ public class GamePanel extends JPanel implements Runnable {
 		running = true;
 		img = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
 		g = (Graphics2D) img.getGraphics();
+		
+		mouse = new MouseHandler(this);
+		key = new KeyHandler(this);
+		
+		gsm = new GameStateManager();
 	}
 
 	@Override
@@ -67,7 +82,7 @@ public class GamePanel extends JPanel implements Runnable {
 
 			while ((now - lastUpdateTime) > TBU && (updateCount < MUBR)) {
 				update();
-				input();
+				input(mouse, key);
 				lastUpdateTime += TBU;
 				updateCount++;
 
@@ -77,7 +92,7 @@ public class GamePanel extends JPanel implements Runnable {
 				lastUpdateTime = now - TBU;
 			}
 			
-			input();
+			input(mouse, key);
 			render();
 			draw();
 			
@@ -109,17 +124,20 @@ public class GamePanel extends JPanel implements Runnable {
 		}
 	}
 
-	public void input() {
-		
-	}
+	
 	private void update() {
-
+		gsm.update();
+	}
+	
+	public void input(MouseHandler mouse, KeyHandler key) {
+		gsm.input(mouse, key);
 	}
 
 	private void render() {
 		if (g != null) {
 			g.setColor(new Color(66, 134, 244));
 			g.fillRect(0, 0, WIDTH, HEIGHT);
+			gsm.render(g);
 		}
 	}
 
