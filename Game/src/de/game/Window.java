@@ -8,6 +8,7 @@ public class Window extends JFrame{
 	public Window() {
 		setTitle("Game");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setResizable(false);
 		setContentPane(new GamePanel());
 		pack();	
 		setLocationRelativeTo(null);
