@@ -25,6 +25,9 @@ public class Sprite {
 		height = tileSize;
 
 		spritesheet = loadSprite(file);
+		
+		spriteWidth = spritesheet.getWidth() / width;
+		spriteHeight = spritesheet.getHeight() / height;
 		loadSpriteArray();
 	}
 
@@ -51,11 +54,12 @@ public class Sprite {
 	}
 
 	public void loadSpriteArray() {
-		spriteArray = new BufferedImage[spriteWidth][spriteHeight];
+		spriteArray = new BufferedImage[spriteHeight][spriteWidth];
 
-		for (int x = 0; x < spriteWidth; x++) {
+		
 			for (int y = 0; y < spriteHeight; y++) {
-				spriteArray[x][y] = getSprite(x, y);
+				for (int x = 0; x < spriteWidth; x++) {
+				spriteArray[y][x] = getSprite(x, y);
 			}
 		}
 	}

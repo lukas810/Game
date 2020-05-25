@@ -17,15 +17,17 @@ public class GamePanel extends JPanel implements Runnable {
 	public static final int WIDTH = 800;
 	public static final int HEIGHT = 500;
 
+	public static int oldFrameCount;
+
 	private Thread thread;
 	private boolean running = false;
-	
+
 	private BufferedImage img;
 	private Graphics2D g;
-	
+
 	private MouseHandler mouse;
 	private KeyHandler key;
-	
+
 	private GameStateManager gsm;
 
 	public GamePanel() {
@@ -38,10 +40,10 @@ public class GamePanel extends JPanel implements Runnable {
 		running = true;
 		img = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
 		g = (Graphics2D) img.getGraphics();
-		
+
 		mouse = new MouseHandler(this);
 		key = new KeyHandler(this);
-		
+
 		gsm = new GameStateManager();
 	}
 
@@ -73,7 +75,7 @@ public class GamePanel extends JPanel implements Runnable {
 
 		int lastSecondTime = (int) (lastUpdateTime / 1000000000);
 
-		int oldFrameCount = 0;
+		oldFrameCount = 0;
 
 		while (running) {
 
@@ -87,32 +89,31 @@ public class GamePanel extends JPanel implements Runnable {
 				updateCount++;
 
 			}
-			
-			if(now - lastUpdateTime > TBU) {
+
+			if (now - lastUpdateTime > TBU) {
 				lastUpdateTime = now - TBU;
 			}
-			
+
 			input(mouse, key);
 			render();
 			draw();
-			
+
 			lastRenderTime = now;
 			frameCount++;
-			
+
 			int thisSecond = (int) (lastUpdateTime / 1000000000);
-			
-			if(thisSecond> lastSecondTime) {
-				if(frameCount != oldFrameCount) {
-					System.out.println("new second " + thisSecond + " " + frameCount);
+
+			if (thisSecond > lastSecondTime) {
+				if (frameCount != oldFrameCount) {
 					oldFrameCount = frameCount;
 				}
 				frameCount = 0;
 				lastSecondTime = thisSecond;
 			}
-			
-			while((now - lastRenderTime) < TTBR && (now - lastUpdateTime) < TBU) {
+
+			while ((now - lastRenderTime) < TTBR && (now - lastUpdateTime) < TBU) {
 				Thread.yield();
-				
+
 				try {
 					Thread.sleep(1);
 				} catch (InterruptedException e) {
@@ -124,11 +125,10 @@ public class GamePanel extends JPanel implements Runnable {
 		}
 	}
 
-	
 	private void update() {
 		gsm.update();
 	}
-	
+
 	public void input(MouseHandler mouse, KeyHandler key) {
 		gsm.input(mouse, key);
 	}
