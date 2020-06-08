@@ -32,7 +32,7 @@ public abstract class Entity {
 
 	protected float dx;
 	protected float dy;
-	protected float maxSpeed = 2f;
+	protected float maxSpeed = 2.5f;
 	protected float acc = 0.7f;
 	protected float deacc = 0.7f;
 

@@ -1,6 +1,7 @@
 package de.game.utils;
 
 import de.game.entity.Entity;
+import de.game.tiles.TileMapObject;
 
 public class AABB {
 
@@ -58,12 +59,12 @@ public class AABB {
 		return false;
 	}
 
-	public boolean colCircleBox(AABB aBox) {
+	public boolean collisionCircleBox(AABB aBox) {
 
 		float cx = (float) (pos.getWorldVar().getX() + radius / Math.sqrt(2) - entity.getSize() / Math.sqrt(2));
 		float cy = (float) (pos.getWorldVar().getY() + radius / Math.sqrt(2) - entity.getSize() / Math.sqrt(2));
 
-		//yDelta aBox.getWidth()
+		// yDelta aBox.getWidth()
 		float xDelta = cx - Math.max(aBox.getPos().getWorldVar().getX() + (aBox.getWidth() / 2),
 				Math.min(cx, aBox.getPos().getX()));
 		float yDelta = cy - Math.max(aBox.getPos().getWorldVar().getY() + (aBox.getHeight() / 2),
@@ -71,6 +72,21 @@ public class AABB {
 
 		return ((xDelta * xDelta + yDelta * yDelta) < ((radius / Math.sqrt(2)) * (radius / Math.sqrt(2))));
 
+	}
+
+	public boolean collisionTile(float ax, float ay) {
+
+		for (int i = 0; i < 4; i++) {
+			int xt = (int) ((pos.getX() + ax) + (i % 2) * width + xOffset) / 16;
+			int yt = (int) ((pos.getY() + ay) + ((int)(i / 2)) * height + yOffset) / 16;
+			
+			
+			if(TileMapObject.tileMapObjectBlocks.containsKey(String.valueOf(xt) + "," + String.valueOf(yt))) {
+				
+				return TileMapObject.tileMapObjectBlocks.get(String.valueOf(xt) + "," + String.valueOf(yt)).update(this);
+			}
+		}
+		return false;
 	}
 
 	public Vector2f getPos() {

@@ -1,8 +1,10 @@
 package de.game.entity;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 
 import de.game.graphics.Sprite;
+import de.game.states.PlayState;
 import de.game.utils.KeyHandler;
 import de.game.utils.MouseHandler;
 import de.game.utils.Vector2f;
@@ -18,18 +20,29 @@ public class Player extends Entity {
 	public void update() {
 		super.update();
 		move();
+//		if (!bounds.collisionTile(dx, 0)) {
+			PlayState.map.setX(PlayState.map.getX() + dx);
+			pos.setX(pos.getX() + dx);
 
-		pos.setX(pos.getX() + dx);
-		pos.setY(pos.getY() + dy);
+//		}
+//		if (!bounds.collisionTile(0, dy)) {
+			PlayState.map.setY(PlayState.map.getY() + dy);
+			pos.setY(pos.getY() + dy);
+//		}
 	}
 
 	@Override
 	public void render(Graphics2D g) {
-		g.drawImage(ani.getImage(), (int) pos.getX(), (int) pos.getY(), size, size, null);
+		g.setColor(Color.BLUE);
+		g.drawRect((int) (pos.getWorldVar().getX() + bounds.getxOffset()),
+				(int) (pos.getWorldVar().getY() + bounds.getyOffset()),(int) bounds.getWidth(),(int) bounds.getHeight());
+		g.drawImage(ani.getImage(), (int) pos.getWorldVar().getX(), (int) pos.getWorldVar().getY(), size, size, null);
 	}
 
 	@Override
 	public void input(KeyHandler key, MouseHandler mouse) {
+		
+		
 		if (key.up.down) {
 			up = true;
 		} else {

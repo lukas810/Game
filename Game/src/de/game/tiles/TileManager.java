@@ -24,7 +24,7 @@ public class TileManager {
 
 	public TileManager(String path) {
 		tilemap = new ArrayList<TileMap>();
-		addTileMap(path, 32, 32);
+		addTileMap(path, 16, 16);
 	}
 
 	private void addTileMap(String path, int blockWidth, int blockHeight) {
@@ -37,15 +37,13 @@ public class TileManager {
 		int layers = 0;
 		Sprite sprite;
 
-		String[] data = new String[10];
+		String[] data = new String[3];
 		try {
 
 			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder;
-			builder = builderFactory.newDocumentBuilder();
+			DocumentBuilder builder = builderFactory.newDocumentBuilder();
 			Document document = builder.parse(new File(getClass().getClassLoader().getResource(path).toURI()));
 			document.getDocumentElement().normalize();
-
 			NodeList list = document.getElementsByTagName("tileset");
 
 			Node node = list.item(0);
@@ -58,13 +56,14 @@ public class TileManager {
 			tileColumns = Integer.parseInt(element.getAttribute("columns"));
 
 			list = document.getElementsByTagName("image");
-			
+
 			sprite = new Sprite("tile/" + imagePath + ".png", tileWidth, tileHeight);
 
 			list = document.getElementsByTagName("layer");
 			layers = list.getLength();
 
 			for (int i = 0; i < layers; i++) {
+
 				node = list.item(i);
 				element = (Element) node;
 
@@ -72,12 +71,14 @@ public class TileManager {
 					width = Integer.parseInt(element.getAttribute("width"));
 					height = Integer.parseInt(element.getAttribute("height"));
 				}
+
 				data[i] = element.getElementsByTagName("data").item(0).getTextContent();
-				
-				if(i>= 1) {
+
+				if (i >= 1) {
 					tilemap.add(new TileMapNorm(data[i], sprite, width, height, blockWidth, blockHeight, tileColumns));
-				}else {
-					tilemap.add(new TileMapObject(data[i], sprite, width, height, blockWidth, blockHeight, tileColumns));
+				} else {
+					tilemap.add(
+							new TileMapObject(data[i], sprite, width, height, blockWidth, blockHeight, tileColumns));
 				}
 			}
 
@@ -88,7 +89,7 @@ public class TileManager {
 	}
 
 	public void render(Graphics2D g) {
-		for(int i = 0;i<tilemap.size();i++) {
+		for (int i = 0; i < tilemap.size(); i++) {
 			tilemap.get(i).render(g);
 		}
 	}

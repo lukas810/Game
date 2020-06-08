@@ -17,15 +17,22 @@ public class PlayState extends GameState {
 	private Player player;
 	private TileManager tileManager;
 
+	public static Vector2f map;
+
 	public PlayState(GameStateManager gsm) {
 		super(gsm);
+
+		map = new Vector2f();
+		Vector2f.setWorldVar(map.getX(), map.getY());
+		tileManager = new TileManager("tile/test2.xml");
 		font = new Font("font/font.png", 10, 10);
-		player = new Player(new Sprite("entity/link.png"), new Vector2f(350, 250), 64);
-		tileManager = new TileManager("tile/test.xml");
+		player = new Player(new Sprite("entity/link.png"),
+				new Vector2f(0 + (GamePanel.WIDTH / 2) - 32, 0 + (GamePanel.HEIGHT / 2) - 32), 64);
 	}
 
 	@Override
 	public void update() {
+		Vector2f.setWorldVar(map.getX(), map.getY());
 		player.update();
 	}
 

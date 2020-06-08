@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 import de.game.graphics.Sprite;
 import de.game.tiles.blocks.Block;
-import de.game.tiles.blocks.GrassBlock;
 import de.game.tiles.blocks.ObjectBlock;
 import de.game.utils.Vector2f;
 
@@ -23,18 +22,13 @@ public class TileMapObject extends TileMap {
 
 		for (int i = 0; i < (width * height); i++) {
 			int temp = Integer.parseInt(block[i].replaceAll("\\s+", ""));
-
 			if (temp != 0) {
-				if (temp == 1) {
+				
+				tempBlock = new ObjectBlock(
+						sprite.getSprite((int) ((temp - 1) % tileColumns), (int) ((temp - 1) / tileColumns)),
+						new Vector2f((int) (i % width) * tileWidth, (int) (i / height) * tileHeight), tileWidth,
+						tileHeight);
 
-					tempBlock = new GrassBlock(sprite.getSprite((int) ((temp - 1) % tileColumns), (int) ((temp - 1) / tileColumns)),
-							new Vector2f((int) (i % width) * tileWidth, (int) ((i / height) * tileHeight)), tileWidth,
-							tileHeight);
-				} else {
-					tempBlock = new ObjectBlock(sprite.getSprite((int) ((temp - 1) % tileColumns), (int) ((temp - 1) / tileColumns)),
-							new Vector2f((int) (i % width) * tileWidth, (int) ((i / height) * tileHeight)), tileWidth,
-							tileHeight);
-				}
 				tileMapObjectBlocks.put(String.valueOf((int) (i % width)) + "," + String.valueOf((int) (i / height)),
 						tempBlock);
 			}
