@@ -13,6 +13,10 @@ public class Player extends Entity {
 
 	public Player(Sprite sprite, Vector2f origin, int size) {
 		super(sprite, origin, size);
+		bounds.setWidth(40);
+		bounds.setHeight(25);
+		bounds.setxOffset(15);
+		bounds.setyOffset(35);
 
 	}
 
@@ -20,15 +24,15 @@ public class Player extends Entity {
 	public void update() {
 		super.update();
 		move();
-//		if (!bounds.collisionTile(dx, 0)) {
+		if (!bounds.collisionTile(dx, 0)) {
 			PlayState.map.setX(PlayState.map.getX() + dx);
 			pos.setX(pos.getX() + dx);
 
-//		}
-//		if (!bounds.collisionTile(0, dy)) {
+		}
+		if (!bounds.collisionTile(0, dy)) {
 			PlayState.map.setY(PlayState.map.getY() + dy);
 			pos.setY(pos.getY() + dy);
-//		}
+		}
 	}
 
 	@Override

@@ -1,13 +1,12 @@
 package de.game.tiles.blocks;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import de.game.utils.AABB;
 import de.game.utils.Vector2f;
 
-public class NormBlock extends Block{
+public class NormBlock extends Block {
 
 	public NormBlock(BufferedImage image, Vector2f pos, int width, int height) {
 		super(image, pos, width, height);
@@ -21,7 +20,5 @@ public class NormBlock extends Block{
 
 	public void render(Graphics2D g) {
 		super.render(g);
-		g.setColor(Color.RED);
-		g.drawRect((int) pos.getWorldVar().getX(), (int) pos.getWorldVar().getY(), width, height);
 	}
 }
