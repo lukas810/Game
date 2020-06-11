@@ -1,7 +1,6 @@
 package de.game.utils;
 
 import de.game.entity.Entity;
-import de.game.tiles.TileMapObject;
 
 public class AABB {
 
@@ -29,6 +28,13 @@ public class AABB {
 		this.entity = entity;
 		size = radius;
 	}
+	
+	public AABB(Vector2f pos, int radius) {
+        this.pos = pos;
+        this.radius = radius;
+
+        size = radius;
+    }
 
 	public void setBox(Vector2f pos, int width, int height) {
 		this.pos = pos;
@@ -61,32 +67,20 @@ public class AABB {
 
 	public boolean collisionCircleBox(AABB aBox) {
 
-		float cx = (float) (pos.getWorldVar().getX() + radius / Math.sqrt(2) - entity.getSize() / Math.sqrt(2));
-		float cy = (float) (pos.getWorldVar().getY() + radius / Math.sqrt(2) - entity.getSize() / Math.sqrt(2));
+		float dx = Math.max(aBox.getPos().getX() + aBox.getxOffset(),
+				Math.min(pos.getX() + (radius / 2), aBox.getPos().getX() + aBox.getxOffset() + aBox.getWidth()));
+		float dy = Math.max(aBox.getPos().getY() + aBox.getyOffset(),
+				Math.min(pos.getY() + (radius / 2), aBox.getPos().getY() + aBox.getyOffset() + aBox.getHeight()));
 
-		// yDelta aBox.getWidth()
-		float xDelta = cx - Math.max(aBox.getPos().getWorldVar().getX() + (aBox.getWidth() / 2),
-				Math.min(cx, aBox.getPos().getX()));
-		float yDelta = cy - Math.max(aBox.getPos().getWorldVar().getY() + (aBox.getHeight() / 2),
-				Math.min(cy, aBox.getPos().getY()));
+		dx = pos.getX() + (radius / 2) - dx;
+		dy = pos.getY() + (radius / 2) - dy;
 
-		return ((xDelta * xDelta + yDelta * yDelta) < ((radius / Math.sqrt(2)) * (radius / Math.sqrt(2))));
-
-	}
-
-	public boolean collisionTile(float ax, float ay) {
-
-		for (int i = 0; i < 4; i++) {
-			int xt = (int) ((pos.getX() + ax) + (i % 2) * width + xOffset) / 16;
-			int yt = (int) ((pos.getY() + ay) + ((int)(i / 2)) * height + yOffset) / 16;
-			
-			
-			if(TileMapObject.tileMapObjectBlocks.containsKey(String.valueOf(xt) + "," + String.valueOf(yt))) {
-				
-				return TileMapObject.tileMapObjectBlocks.get(String.valueOf(xt) + "," + String.valueOf(yt)).update(this);
-			}
+		if (Math.sqrt(dx * dx + dy * dy) < radius / 2) {
+			return true;
 		}
+
 		return false;
+
 	}
 
 	public Vector2f getPos() {

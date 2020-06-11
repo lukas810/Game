@@ -13,6 +13,10 @@ public class Player extends Entity {
 
 	public Player(Sprite sprite, Vector2f origin, int size) {
 		super(sprite, origin, size);
+		
+		maxSpeed = 2.5f;
+		acc = 0.7f;
+		deacc = 0.7f;
 		bounds.setWidth(40);
 		bounds.setHeight(25);
 		bounds.setxOffset(15);
@@ -24,12 +28,12 @@ public class Player extends Entity {
 	public void update() {
 		super.update();
 		move();
-		if (!bounds.collisionTile(dx, 0)) {
+		if (!tileCollision.collisionTile(dx, 0)) {
 			PlayState.map.setX(PlayState.map.getX() + dx);
 			pos.setX(pos.getX() + dx);
 
 		}
-		if (!bounds.collisionTile(0, dy)) {
+		if (!tileCollision.collisionTile(0, dy)) {
 			PlayState.map.setY(PlayState.map.getY() + dy);
 			pos.setY(pos.getY() + dy);
 		}
@@ -39,14 +43,14 @@ public class Player extends Entity {
 	public void render(Graphics2D g) {
 		g.setColor(Color.BLUE);
 		g.drawRect((int) (pos.getWorldVar().getX() + bounds.getxOffset()),
-				(int) (pos.getWorldVar().getY() + bounds.getyOffset()),(int) bounds.getWidth(),(int) bounds.getHeight());
+				(int) (pos.getWorldVar().getY() + bounds.getyOffset()), (int) bounds.getWidth(),
+				(int) bounds.getHeight());
 		g.drawImage(ani.getImage(), (int) pos.getWorldVar().getX(), (int) pos.getWorldVar().getY(), size, size, null);
 	}
 
 	@Override
 	public void input(KeyHandler key, MouseHandler mouse) {
-		
-		
+
 		if (key.up.down) {
 			up = true;
 		} else {

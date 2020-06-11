@@ -8,6 +8,7 @@ import de.game.graphics.Sprite;
 import de.game.utils.AABB;
 import de.game.utils.KeyHandler;
 import de.game.utils.MouseHandler;
+import de.game.utils.TileCollision;
 import de.game.utils.Vector2f;
 
 public abstract class Entity {
@@ -32,12 +33,15 @@ public abstract class Entity {
 
 	protected float dx;
 	protected float dy;
-	protected float maxSpeed = 2.5f;
-	protected float acc = 0.7f;
-	protected float deacc = 0.7f;
+	protected float maxSpeed;
+	protected float acc;
+	protected float deacc;
 
 	protected AABB hitBounds;
 	protected AABB bounds;
+	
+	protected TileCollision tileCollision;
+	
 
 	public Entity(Sprite sprite, Vector2f origin, int size) {
 		this.sprite = sprite;
@@ -49,6 +53,8 @@ public abstract class Entity {
 
 		ani = new Animation();
 		setAnimation(DOWN, sprite.getSpriteArrayAtIndex(DOWN), 10);
+		
+		tileCollision = new TileCollision(this);
 	}
 	
 	public abstract void render(Graphics2D g);
