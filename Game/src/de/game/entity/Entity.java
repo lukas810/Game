@@ -17,6 +17,8 @@ public abstract class Entity {
 	private static final int DOWN = 2;
 	private static final int RIGHT = 0;
 	private static final int LEFT = 1;
+	
+	protected int currentDirection = DOWN;
 
 	protected Animation ani;
 	protected Sprite sprite;
@@ -96,6 +98,68 @@ public abstract class Entity {
 			setAnimation(currentAnimation, sprite.getSpriteArrayAtIndex(currentAnimation), -1);
 		}
 	}
+	
+	 public void move() {
+	        if(up) {
+	            currentDirection = UP;
+	            dy -= acc;
+	            if(dy < -maxSpeed) {
+	                dy = -maxSpeed;
+	            }
+	        } else {
+	            if(dy < 0) {
+	                dy += deacc;
+	                if(dy > 0) {
+	                    dy = 0;
+	                }
+	            }
+	        }
+
+	        if(down) {
+	            currentDirection = DOWN;
+	            dy += acc;
+	            if(dy > maxSpeed) {
+	                dy = maxSpeed;
+	            }
+	        } else {
+	            if(dy > 0) {
+	                dy -= deacc;
+	                if(dy < 0) {
+	                    dy = 0;
+	                }
+	            }
+	        }
+
+	        if(left) {
+	            currentDirection = LEFT;
+	            dx -= acc;
+	            if(dx < -maxSpeed) {
+	                dx = -maxSpeed;
+	            }
+	        } else {
+	            if(dx < 0) {
+	                dx += deacc;
+	                if(dx > 0) {
+	                    dx = 0;
+	                }
+	            }
+	        }
+
+	        if(right) {
+	            currentDirection = RIGHT;
+	            dx += acc;
+	            if(dx > maxSpeed) {
+	                dx = maxSpeed;
+	            }
+	        } else {
+	            if(dx > 0) {
+	                dx -= deacc;
+	                if(dx < 0) {
+	                    dx = 0;
+	                }
+	            }
+	        }
+	    }
 	
 	private void setHitboxDirection() {
 		if(up) {

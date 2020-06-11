@@ -31,7 +31,8 @@ public class Enemy extends Entity {
 
 	public void update(Player player) {
 		super.update();
-		move(player);
+		chase(player);
+		move();
 		if (!tileCollision.collisionTile(dx, 0)) {
 			sense.getPos().setX((sense.getPos().getX() + dx));
 			pos.setX(pos.getX() + dx);
@@ -58,56 +59,36 @@ public class Enemy extends Entity {
 		g.drawImage(ani.getImage(), (int) pos.getWorldVar().getX(), (int) pos.getWorldVar().getY(), size, size, null);
 	}
 
-	private void move(Player player) {
-		if (sense.collisionCircleBox(player.getBounds())) {
+	 public void chase(Player player) {
+	        AABB playerBounds = player.getBounds();
+	        if (sense.collisionCircleBox(playerBounds)) {
+	            if (pos.getY() > player.pos.getY() + 1) {
+	                up = true;
+	            } else {
+	                up = false;
+	            }
+	            if (pos.getY() < player.pos.getY() - 1) {
+	                down = true;
+	            } else {
+	                down = false;
+	            }
 
-			if (pos.getY() > player.pos.getY()) {
-				dy -= acc;
-				up = true;
-				down = false;
-				if (dy < -maxSpeed) {
-					dy = -maxSpeed;
-				}
-			} else if (pos.getY() < player.pos.getY()) {
-				dy += acc;
-				down = true;
-				up = false;
-				if (dy > maxSpeed) {
-					dy = maxSpeed;
-				}
-			} else {
-				dy = 0;
-				up = false;
-				down = false;
-			}
-
-			if (pos.getX() > player.pos.getX() -1) {
-				dx -= acc;
-				left = true;
-				right = false;
-				if (dx < -maxSpeed) {
-					dx = -maxSpeed;
-				}
-			} else if (pos.getX() < player.pos.getX() +1 ) {
-				dx += acc;
-				right = true;
-				left = false;
-				if (dx > +maxSpeed) {
-					dx = maxSpeed;
-				}
-			} else {
-				dx = 0;
-				right = false;
-				left = false;
-			}
-		} else {
-			up = false;
-			down = false;
-			right = false;
-			left = false;
-			dx = 0;
-			dy = 0;
-		}
-	}
+	            if (pos.getX() > player.pos.getX() + 1) {
+	                left = true;
+	            } else {
+	                left = false;
+	            } 
+	            if (pos.getX() < player.pos.getX() - 1) {
+	                right = true;
+	            } else {
+	                right = false;
+	            }
+	        } else {
+	            up = false;
+	            down = false;
+	            left = false;
+	            right = false;
+	        }
+	    }
 
 }
