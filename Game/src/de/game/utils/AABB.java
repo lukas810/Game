@@ -53,8 +53,8 @@ public class AABB {
 	public boolean collides(AABB bBox) {
 		float ax = ((pos.getWorldVar().getX() + (xOffset)) + (width / 2));
 		float ay = ((pos.getWorldVar().getY() + (yOffset)) + (height / 2));
-		float bx = ((bBox.getPos().getWorldVar().getX() + (bBox.getxOffset())) + (width / 2));
-		float by = ((bBox.getPos().getWorldVar().getY() + (bBox.getyOffset())) + (height / 2));
+		float bx = ((bBox.getPos().getWorldVar().getX() + (bBox.getxOffset())) + (width / 2)); //bBox.getWidth()/2
+		float by = ((bBox.getPos().getWorldVar().getY() + (bBox.getyOffset())) + (height / 2));//bBox.getHeight()/2
 
 		if (Math.abs(ax - bx) < (width / 2) + (bBox.getWidth() / 2)) {
 			if (Math.abs(ay - by) < (width / 2) + (bBox.getHeight() / 2)) {

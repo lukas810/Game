@@ -13,20 +13,25 @@ public class Player extends Entity {
 
 	public Player(Sprite sprite, Vector2f origin, int size) {
 		super(sprite, origin, size);
-		
+
 		maxSpeed = 2.5f;
 		acc = 0.7f;
 		deacc = 0.7f;
-		bounds.setWidth(40);
-		bounds.setHeight(25);
-		bounds.setxOffset(15);
-		bounds.setyOffset(35);
+
+		bounds.setWidth(42);
+		bounds.setHeight(20);
+		bounds.setxOffset(12);
+		bounds.setyOffset(40);
 
 	}
 
-	@Override
-	public void update() {
+	public void update(Enemy enemy) {
 		super.update();
+		
+		if(attack && hitBounds.collides(enemy.getBounds())) {
+//			System.out.println("a");
+		}
+		
 		move();
 		if (!tileCollision.collisionTile(dx, 0)) {
 			PlayState.map.setX(PlayState.map.getX() + dx);
@@ -45,6 +50,13 @@ public class Player extends Entity {
 		g.drawRect((int) (pos.getWorldVar().getX() + bounds.getxOffset()),
 				(int) (pos.getWorldVar().getY() + bounds.getyOffset()), (int) bounds.getWidth(),
 				(int) bounds.getHeight());
+
+		if (attack) {
+			g.setColor(Color.RED);
+			g.drawRect((int) (hitBounds.getPos().getWorldVar().getX() + hitBounds.getxOffset()),
+					(int) (hitBounds.getPos().getWorldVar().getY() + hitBounds.getyOffset()),
+					(int) hitBounds.getWidth(), (int) hitBounds.getHeight());
+		}
 		g.drawImage(ani.getImage(), (int) pos.getWorldVar().getX(), (int) pos.getWorldVar().getY(), size, size, null);
 	}
 

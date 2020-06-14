@@ -37,7 +37,7 @@ public class PlayState extends GameState {
 	@Override
 	public void update() {
 		Vector2f.setWorldVar(map.getX(), map.getY());
-		player.update();
+		player.update(enemy);
 		enemy.update(player);
 	}
 
