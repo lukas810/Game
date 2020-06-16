@@ -5,15 +5,20 @@ import java.awt.Graphics2D;
 
 import de.game.graphics.Sprite;
 import de.game.utils.AABB;
+import de.game.utils.Camera;
 import de.game.utils.Vector2f;
 
 public class Enemy extends Entity {
 
 	private AABB sense;
 	private int radius;
+	
+	private Camera camera;
 
-	public Enemy(Sprite sprite, Vector2f origin, int size) {
+	public Enemy(Sprite sprite, Vector2f origin, int size, Camera camera) {
 		super(sprite, origin, size);
+		
+		this.camera = camera;
 
 		acc = 0.5f;
 		deacc = 0.7f;
@@ -30,6 +35,7 @@ public class Enemy extends Entity {
 	}
 
 	public void update(Player player) {
+		if(camera.getBounds().collides(this.bounds)) {
 		super.update();
 		chase(player);
 		move();
@@ -43,11 +49,13 @@ public class Enemy extends Entity {
 			pos.setY(pos.getY() + dy);
 
 		}
+		}
 
 	}
 
 	@Override
 	public void render(Graphics2D g) {
+		if(camera.getBounds().collides(this.bounds)) {
 		g.setColor(Color.GRAY);
 		g.drawRect((int) (pos.getWorldVar().getX() + bounds.getxOffset()),
 				(int) (pos.getWorldVar().getY() + bounds.getyOffset()), (int) bounds.getWidth(),
@@ -57,7 +65,9 @@ public class Enemy extends Entity {
 		g.drawOval((int) sense.getPos().getWorldVar().getX(), (int) sense.getPos().getWorldVar().getY(), radius,
 				radius);
 		g.drawImage(ani.getImage(), (int) pos.getWorldVar().getX(), (int) pos.getWorldVar().getY(), size, size, null);
-	}
+	
+		}
+		}
 
 	public void chase(Player player) {
 		AABB playerBounds = player.getBounds();

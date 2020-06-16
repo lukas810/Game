@@ -87,7 +87,7 @@ public class TileManager {
 							new TileMapObject(data[i], sprite, width, height, blockWidth, blockHeight, tileColumns));
 				}
 
-				camera.setLimit(width * blockWidth, height * blockHeight);
+				camera.setLimit(width * blockWidth -64, height * blockHeight -48);
 			}
 
 		} catch (Exception e) {

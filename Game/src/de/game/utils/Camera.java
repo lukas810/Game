@@ -38,10 +38,6 @@ public class Camera {
 		this.heightLimit = heightLimit;
 	}
 
-	public void setTileSize(int tileSize) {
-		this.tileSize = tileSize;
-	}
-
 	public void update() {
 		move();
 		if (entity != null) {
@@ -229,5 +225,13 @@ public class Camera {
 	public void setHeightLimit(int heightLimit) {
 		this.heightLimit = heightLimit;
 	}
+	
+	public void setTileSize(int tileSize) {
+		this.tileSize = tileSize;
+	}
+	
+	public Vector2f getPos() {
+        return collisionCam.getPos();
+    }
 
 }

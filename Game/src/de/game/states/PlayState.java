@@ -31,12 +31,12 @@ public class PlayState extends GameState {
 		Vector2f.setWorldVar(map.getX(), map.getY());
 
 
-		camera = new Camera(new AABB(new Vector2f(16, 16), GamePanel.WIDTH -16, GamePanel.HEIGHT -16));
+		camera = new Camera(new AABB(new Vector2f(0, 0), GamePanel.WIDTH , GamePanel.HEIGHT ));
 		tileManager = new TileManager("tile/test.xml", camera);
 		font = new Font("font/font.png", 10, 10);
 		player = new Player(new Sprite("entity/link.png"),
 				new Vector2f(0 + (GamePanel.WIDTH / 2) - 32, 0 + (GamePanel.HEIGHT / 2) - 32), 64);
-		enemy = new Enemy(new Sprite("entity/enemy.png", 48, 48), new Vector2f(550, 75), 64);
+		enemy = new Enemy(new Sprite("entity/enemy.png", 48, 48), new Vector2f(550, 75), 64, camera);
 		
 		camera.target(player);
 	}
