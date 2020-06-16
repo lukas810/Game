@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 import de.game.graphics.Sprite;
-import de.game.states.PlayState;
 import de.game.utils.KeyHandler;
 import de.game.utils.MouseHandler;
 import de.game.utils.Vector2f;
@@ -29,18 +28,22 @@ public class Player extends Entity {
 		super.update();
 		
 		if(attack && hitBounds.collides(enemy.getBounds())) {
-//			System.out.println("a");
 		}
 		
 		move();
 		if (!tileCollision.collisionTile(dx, 0)) {
-			PlayState.map.setX(PlayState.map.getX() + dx);
+			
 			pos.setX(pos.getX() + dx);
+			xCol = false;
 
+		}else {
+			 xCol = true;
 		}
 		if (!tileCollision.collisionTile(0, dy)) {
-			PlayState.map.setY(PlayState.map.getY() + dy);
 			pos.setY(pos.getY() + dy);
+			 yCol = false;
+		}else {
+			 yCol = true;
 		}
 	}
 

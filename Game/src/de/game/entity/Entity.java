@@ -17,7 +17,7 @@ public abstract class Entity {
 	private static final int DOWN = 2;
 	private static final int RIGHT = 0;
 	private static final int LEFT = 1;
-	
+
 	protected int currentDirection = DOWN;
 
 	protected Animation ani;
@@ -41,9 +41,11 @@ public abstract class Entity {
 
 	protected AABB hitBounds;
 	protected AABB bounds;
-	
+
+	public boolean xCol = false;
+	public boolean yCol = false;
+
 	protected TileCollision tileCollision;
-	
 
 	public Entity(Sprite sprite, Vector2f origin, int size) {
 		this.sprite = sprite;
@@ -52,18 +54,18 @@ public abstract class Entity {
 
 		bounds = new AABB(origin, size, size);
 		hitBounds = new AABB(origin, size, size);
-		hitBounds.setxOffset(size/2);
+		hitBounds.setxOffset(size / 2);
 
 		ani = new Animation();
 		setAnimation(DOWN, sprite.getSpriteArrayAtIndex(DOWN), 10);
-		
+
 		tileCollision = new TileCollision(this);
 	}
-	
+
 	public abstract void render(Graphics2D g);
 
 	public void input(KeyHandler key, MouseHandler mouse) {
-		
+
 	}
 
 	public void setAnimation(int i, BufferedImage[] frames, int delay) {
@@ -99,97 +101,96 @@ public abstract class Entity {
 			setAnimation(currentAnimation, sprite.getSpriteArrayAtIndex(currentAnimation), -1);
 		}
 	}
-	
-	 public void move() {
-	        if(up) {
-	            currentDirection = UP;
-	            dy -= acc;
-	            if(dy < -maxSpeed) {
-	                dy = -maxSpeed;
-	            }
-	        } else {
-	            if(dy < 0) {
-	                dy += deacc;
-	                if(dy > 0) {
-	                    dy = 0;
-	                }
-	            }
-	        }
 
-	        if(down) {
-	            currentDirection = DOWN;
-	            dy += acc;
-	            if(dy > maxSpeed) {
-	                dy = maxSpeed;
-	            }
-	        } else {
-	            if(dy > 0) {
-	                dy -= deacc;
-	                if(dy < 0) {
-	                    dy = 0;
-	                }
-	            }
-	        }
+	public void move() {
+		if (up) {
+			currentDirection = UP;
+			dy -= acc;
+			if (dy < -maxSpeed) {
+				dy = -maxSpeed;
+			}
+		} else {
+			if (dy < 0) {
+				dy += deacc;
+				if (dy > 0) {
+					dy = 0;
+				}
+			}
+		}
 
-	        if(left) {
-	            currentDirection = LEFT;
-	            dx -= acc;
-	            if(dx < -maxSpeed) {
-	                dx = -maxSpeed;
-	            }
-	        } else {
-	            if(dx < 0) {
-	                dx += deacc;
-	                if(dx > 0) {
-	                    dx = 0;
-	                }
-	            }
-	        }
+		if (down) {
+			currentDirection = DOWN;
+			dy += acc;
+			if (dy > maxSpeed) {
+				dy = maxSpeed;
+			}
+		} else {
+			if (dy > 0) {
+				dy -= deacc;
+				if (dy < 0) {
+					dy = 0;
+				}
+			}
+		}
 
-	        if(right) {
-	            currentDirection = RIGHT;
-	            dx += acc;
-	            if(dx > maxSpeed) {
-	                dx = maxSpeed;
-	            }
-	        } else {
-	            if(dx > 0) {
-	                dx -= deacc;
-	                if(dx < 0) {
-	                    dx = 0;
-	                }
-	            }
-	        }
-	    }
-	
+		if (left) {
+			currentDirection = LEFT;
+			dx -= acc;
+			if (dx < -maxSpeed) {
+				dx = -maxSpeed;
+			}
+		} else {
+			if (dx < 0) {
+				dx += deacc;
+				if (dx > 0) {
+					dx = 0;
+				}
+			}
+		}
+
+		if (right) {
+			currentDirection = RIGHT;
+			dx += acc;
+			if (dx > maxSpeed) {
+				dx = maxSpeed;
+			}
+		} else {
+			if (dx > 0) {
+				dx -= deacc;
+				if (dx < 0) {
+					dx = 0;
+				}
+			}
+		}
+	}
+
 	private void setHitboxDirection() {
-		if(up) {
-			hitBounds.setyOffset(-size/2);
+		if (up) {
+			hitBounds.setyOffset(-size / 2);
 			hitBounds.setxOffset(0);
-		} else if(down) {
-			hitBounds.setyOffset(size/2);
+		} else if (down) {
+			hitBounds.setyOffset(size / 2);
 			hitBounds.setxOffset(0);
-		} else if(right) {
+		} else if (right) {
 			hitBounds.setyOffset(0);
-			hitBounds.setxOffset(size/2);
-		} else if(left) {
+			hitBounds.setxOffset(size / 2);
+		} else if (left) {
 			hitBounds.setyOffset(0);
-			hitBounds.setxOffset(-size/2);
+			hitBounds.setxOffset(-size / 2);
 		}
 	}
 
 	public int getSize() {
 		return size;
 	}
-	
+
 	public Animation getAnimation() {
 		return ani;
 	}
-	
+
 	public void setSprite(Sprite sprite) {
 		this.sprite = sprite;
 	}
-	
 
 	public AABB getBounds() {
 		return bounds;
@@ -210,4 +211,33 @@ public abstract class Entity {
 	public void setDeacc(float deacc) {
 		this.deacc = deacc;
 	}
+
+	public float getMaxSpeed() {
+		return maxSpeed;
+	}
+
+	public float getAcc() {
+		return acc;
+	}
+
+	public float getDeacc() {
+		return deacc;
+	}
+
+	public float getDx() {
+		return dx;
+	}
+
+	public void setDx(float dx) {
+		this.dx = dx;
+	}
+
+	public float getDy() {
+		return dy;
+	}
+
+	public void setDy(float dy) {
+		this.dy = dy;
+	}
+
 }

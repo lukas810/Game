@@ -59,8 +59,13 @@ public class GameStateManager {
 	}
 	
 	public  void input(MouseHandler mouse, KeyHandler key) {
+		key.escape.tick();
 		for(int i = 0; i<states.size();i++) {
 			states.get(i).input(mouse, key);
+		}
+		
+		if(key.escape.clicked) {
+			System.exit(0);
 		}
 	}
 	

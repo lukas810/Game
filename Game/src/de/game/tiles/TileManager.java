@@ -13,21 +13,25 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import de.game.graphics.Sprite;
+import de.game.utils.Camera;
 
 public class TileManager {
 
 	public static ArrayList<TileMap> tilemap;
+	
+	private Camera camera;
 
 	public TileManager() {
 		tilemap = new ArrayList<TileMap>();
 	}
 
-	public TileManager(String path) {
+	public TileManager(String path, Camera camera) {
 		tilemap = new ArrayList<TileMap>();
-		addTileMap(path, 16, 16);
+		addTileMap(path, 16, 16, camera);
 	}
 
-	private void addTileMap(String path, int blockWidth, int blockHeight) {
+	private void addTileMap(String path, int blockWidth, int blockHeight, Camera camera) {
+		this.camera = camera;
 		String imagePath;
 		int width = 0;
 		int height = 0;
@@ -36,6 +40,8 @@ public class TileManager {
 		int tileColumns;
 		int layers = 0;
 		Sprite sprite;
+		
+		camera.setTileSize(blockWidth);
 
 		String[] data = new String[3];
 		try {
@@ -80,6 +86,8 @@ public class TileManager {
 					tilemap.add(
 							new TileMapObject(data[i], sprite, width, height, blockWidth, blockHeight, tileColumns));
 				}
+
+				camera.setLimit(width * blockWidth, height * blockHeight);
 			}
 
 		} catch (Exception e) {
@@ -89,8 +97,11 @@ public class TileManager {
 	}
 
 	public void render(Graphics2D g) {
+		if(camera == null) {
+			return;
+		}
 		for (int i = 0; i < tilemap.size(); i++) {
-			tilemap.get(i).render(g);
+			tilemap.get(i).render(g, camera.getBounds());
 		}
 	}
 }

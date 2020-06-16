@@ -20,11 +20,11 @@ public class TileCollision {
 			int yt = (int) ((entity.getBounds().getPos().getY() + ay) + (i / 2) * entity.getBounds().getHeight()
 					+ entity.getBounds().getyOffset()) / 16;
 			
-			if(TileMapObject.tileMapObjectBlocks.containsKey(String.valueOf(xt) + "," + String.valueOf(yt))) {
-				Block block = TileMapObject.tileMapObjectBlocks.get(String.valueOf(xt) + "," + String.valueOf(yt));
-				return block.update(entity.getBounds());
+			if(TileMapObject.eventBlocks[xt + (yt * TileMapObject.height)] instanceof Block) {
+                Block block = TileMapObject.eventBlocks[xt + (yt * TileMapObject.height)];
+                
+                return block.update(entity.getBounds());
 			}
-
 			
 		}
 		return false;

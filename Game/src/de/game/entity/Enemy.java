@@ -59,36 +59,36 @@ public class Enemy extends Entity {
 		g.drawImage(ani.getImage(), (int) pos.getWorldVar().getX(), (int) pos.getWorldVar().getY(), size, size, null);
 	}
 
-	 public void chase(Player player) {
-	        AABB playerBounds = player.getBounds();
-	        if (sense.collisionCircleBox(playerBounds)) {
-	            if (pos.getY() > player.pos.getY() + 1) {
-	                up = true;
-	            } else {
-	                up = false;
-	            }
-	            if (pos.getY() < player.pos.getY() - 1) {
-	                down = true;
-	            } else {
-	                down = false;
-	            }
+	public void chase(Player player) {
+		AABB playerBounds = player.getBounds();
+		if (sense.collisionCircleBox(playerBounds)) {
+			if (pos.getY() > player.pos.getY() + 1) {
+				up = true;
+			} else {
+				up = false;
+			}
+			if (pos.getY() < player.pos.getY() - 1) {
+				down = true;
+			} else {
+				down = false;
+			}
 
-	            if (pos.getX() > player.pos.getX() + 1) {
-	                left = true;
-	            } else {
-	                left = false;
-	            } 
-	            if (pos.getX() < player.pos.getX() - 1) {
-	                right = true;
-	            } else {
-	                right = false;
-	            }
-	        } else {
-	            up = false;
-	            down = false;
-	            left = false;
-	            right = false;
-	        }
-	    }
+			if (pos.getX() > player.pos.getX() + 1) {
+				left = true;
+			} else {
+				left = false;
+			}
+			if (pos.getX() < player.pos.getX() - 1) {
+				right = true;
+			} else {
+				right = false;
+			}
+		} else {
+			up = false;
+			down = false;
+			left = false;
+			right = false;
+		}
+	}
 
 }

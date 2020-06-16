@@ -1,21 +1,31 @@
 package de.game.tiles;
 
 import java.awt.Graphics2D;
-import java.util.ArrayList;
 
 import de.game.graphics.Sprite;
 import de.game.tiles.blocks.Block;
 import de.game.tiles.blocks.NormBlock;
+import de.game.utils.AABB;
 import de.game.utils.Vector2f;
 
 public class TileMapNorm extends TileMap {
 
-	private  ArrayList<Block> blocks;
+	private Block[] blocks;
+
+	private int tileWidth;
+	private int tileHeight;
+
+	private int height;
 
 	public TileMapNorm(String data, Sprite sprite, int width, int height, int tileWidth, int tileHeight,
 			int tileColumns) {
 
-		blocks = new ArrayList<Block>();
+		blocks = new Block[width * height];
+
+		this.tileWidth = tileWidth;
+		this.tileHeight = tileHeight;
+
+		this.height = height;
 
 		String[] block = data.split(",");
 
@@ -23,10 +33,10 @@ public class TileMapNorm extends TileMap {
 			int temp = Integer.parseInt(block[i].replaceAll("\\s+", ""));
 			if (temp != 0) {
 
-				blocks.add(new NormBlock(
+				blocks[i] = new NormBlock(
 						sprite.getSprite((int) ((temp - 1) % tileColumns), (int) ((temp - 1) / tileColumns)),
 						new Vector2f((int) (i % width) * tileWidth, (int) (i / height) * tileHeight), tileWidth,
-						tileHeight));
+						tileHeight);
 
 			}
 		}
@@ -34,10 +44,21 @@ public class TileMapNorm extends TileMap {
 	}
 
 	@Override
-	public void render(Graphics2D g) {
-		for (int i = 0; i < blocks.size(); i++) {
-			blocks.get(i).render(g);
-		}
+	public void render(Graphics2D g, AABB cam) {
+		int x = (int) ((cam.getPos().getX()) / tileWidth);
+		int y = (int) ((cam.getPos().getY()) / tileHeight);
 
+		for (int i = x; i < x + (cam.getWidth() / tileWidth); i++) {
+			for (int j = y; j < y + (cam.getHeight() / tileHeight); j++) {
+				if (i + (j * height) > -1 && i + (j * height) < blocks.length && blocks[i + (j * height)] != null) {
+					blocks[i + (j * height)].render(g);
+				}
+			}
+		}
+	}
+
+	@Override
+	public Block[] getBlocks() {
+		return blocks;
 	}
 }
