@@ -64,7 +64,7 @@ public abstract class Entity {
 
 	public abstract void render(Graphics2D g);
 
-	public void input(KeyHandler key, MouseHandler mouse) {
+	public void input(MouseHandler mouse, KeyHandler key) {
 
 	}
 

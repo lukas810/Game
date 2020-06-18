@@ -26,24 +26,24 @@ public class Player extends Entity {
 
 	public void update(Enemy enemy) {
 		super.update();
-		
-		if(attack && hitBounds.collides(enemy.getBounds())) {
+
+		if (attack && hitBounds.collides(enemy.getBounds())) {
 		}
-		
+
 		move();
 		if (!tileCollision.collisionTile(dx, 0)) {
-			
+
 			pos.setX(pos.getX() + dx);
 			xCol = false;
 
-		}else {
-			 xCol = true;
+		} else {
+			xCol = true;
 		}
 		if (!tileCollision.collisionTile(0, dy)) {
 			pos.setY(pos.getY() + dy);
-			 yCol = false;
-		}else {
-			 yCol = true;
+			yCol = false;
+		} else {
+			yCol = true;
 		}
 	}
 
@@ -64,7 +64,7 @@ public class Player extends Entity {
 	}
 
 	@Override
-	public void input(KeyHandler key, MouseHandler mouse) {
+	public void input(MouseHandler mouse, KeyHandler key) {
 
 		if (key.up.down) {
 			up = true;
@@ -90,6 +90,16 @@ public class Player extends Entity {
 			attack = true;
 		} else {
 			attack = false;
+		}
+		//moonwalking
+		if (up && down) {
+			up = false;
+			down = false;
+		}
+
+		if (right && left) {
+			right = false;
+			left = false;
 		}
 
 	}
