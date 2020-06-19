@@ -13,10 +13,13 @@ import de.game.utils.Vector2f;
 
 public abstract class Entity {
 
-	private static final int UP = 3;
-	private static final int DOWN = 2;
 	private static final int RIGHT = 0;
 	private static final int LEFT = 1;
+	private static final int DOWN = 2;
+	private static final int UP = 3;
+//	private static final int FALLING = 4; unused
+	private static final int ATTACK = 5;
+	private static final int IDLE = 6;
 
 	protected int currentDirection = DOWN;
 
@@ -31,7 +34,13 @@ public abstract class Entity {
 	protected boolean right;
 	protected boolean left;
 	protected boolean attack;
-	protected int attackSpeed;
+	protected boolean hasIdle = false;
+	
+	protected double attacktime;
+	protected boolean canAttack = true;
+	protected int attackSpeed = 1050;
+    protected int attackDuration = 650;
+    protected boolean attacking = false;
 
 	protected float dx;
 	protected float dy;
@@ -76,31 +85,44 @@ public abstract class Entity {
 
 	public void update() {
 		animate();
-		setHitboxDirection();
+		setHitBoxDirection();
 		ani.update();
 	}
 
-	public void animate() {
-		if (up) {
-			if (currentAnimation != UP || ani.getDelay() == -1) {
-				setAnimation(UP, sprite.getSpriteArrayAtIndex(UP), 5);
-			}
-		} else if (down) {
-			if (currentAnimation != DOWN || ani.getDelay() == -1) {
-				setAnimation(DOWN, sprite.getSpriteArrayAtIndex(DOWN), 5);
-			}
-		} else if (right) {
-			if (currentAnimation != RIGHT || ani.getDelay() == -1) {
-				setAnimation(RIGHT, sprite.getSpriteArrayAtIndex(RIGHT), 5);
-			}
-		} else if (left) {
-			if (currentAnimation != LEFT || ani.getDelay() == -1) {
-				setAnimation(LEFT, sprite.getSpriteArrayAtIndex(LEFT), 5);
-			}
-		} else {
-			setAnimation(currentAnimation, sprite.getSpriteArrayAtIndex(currentAnimation), -1);
-		}
-	}
+    public void animate() {
+
+        if(attacking) {
+            if(currentAnimation < 5) {
+                setAnimation(currentAnimation + ATTACK, sprite.getSpriteArrayAtIndex(currentAnimation + ATTACK), attackDuration / 100);
+            }
+        } else if (up) {
+            if ((currentAnimation != UP || ani.getDelay() == -1)) {
+                setAnimation(UP, sprite.getSpriteArrayAtIndex(UP), 5);
+            }
+        } else if (down) {
+            if ((currentAnimation != DOWN || ani.getDelay() == -1)) {
+                setAnimation(DOWN, sprite.getSpriteArrayAtIndex(DOWN), 5);
+            }
+        } else if (left) {
+            if ((currentAnimation != LEFT || ani.getDelay() == -1)) {
+                setAnimation(LEFT, sprite.getSpriteArrayAtIndex(LEFT), 5);
+            }
+        } else if (right) {
+            if ((currentAnimation != RIGHT || ani.getDelay() == -1)) {
+                setAnimation(RIGHT, sprite.getSpriteArrayAtIndex(RIGHT), 5);
+            }
+        } else {
+            if(!attacking && currentAnimation > 4) {
+                setAnimation(currentAnimation - ATTACK, sprite.getSpriteArrayAtIndex(currentAnimation - ATTACK), -1);
+            } else if(!attacking) {
+                if(hasIdle && currentAnimation != IDLE) {
+                    setAnimation(IDLE, sprite.getSpriteArrayAtIndex(IDLE), 10);
+                } else if(!hasIdle) {
+                    setAnimation(currentAnimation, sprite.getSpriteArrayAtIndex(currentAnimation), -1);
+                }
+            }
+        }
+    }
 
 	public void move() {
 		if (up) {
@@ -164,21 +186,36 @@ public abstract class Entity {
 		}
 	}
 
-	private void setHitboxDirection() {
-		if (up) {
-			hitBounds.setyOffset(-size / 2);
-			hitBounds.setxOffset(0);
-		} else if (down) {
-			hitBounds.setyOffset(size / 2);
-			hitBounds.setxOffset(0);
-		} else if (right) {
-			hitBounds.setyOffset(0);
-			hitBounds.setxOffset(size / 2);
-		} else if (left) {
-			hitBounds.setyOffset(0);
-			hitBounds.setxOffset(-size / 2);
-		}
-	}
+    private void setHitBoxDirection() {
+        if (up && !attacking) {
+            hitBounds.setxOffset((size - hitBounds.getWidth()) / 2);
+            hitBounds.setyOffset(-hitBounds.getHeight() / 2 + hitBounds.getxOffset());
+        } else if (down && !attacking) {
+            hitBounds.setxOffset((size - hitBounds.getWidth()) / 2);
+            hitBounds.setyOffset(hitBounds.getHeight() / 2 + hitBounds.getxOffset());
+        } else if (left && !attacking) {
+            hitBounds.setyOffset((size - hitBounds.getHeight()) / 2);
+            hitBounds.setxOffset(-hitBounds.getWidth() / 2 + hitBounds.getyOffset()); 
+        } else if (right && !attacking) {
+            hitBounds.setyOffset((size - hitBounds.getHeight()) / 2);
+            hitBounds.setxOffset(hitBounds.getWidth() / 2 + hitBounds.getyOffset());
+        }
+    }
+    
+    protected boolean isAttacking(double time) {
+
+        if((attacktime / 1000000) > ((time / 1000000) - attackSpeed)) {
+            canAttack = false;
+        } else {
+            canAttack = true;
+        }
+
+        if((attacktime / 1000000) + attackDuration > (time / 1000000)) {
+            return true;
+        }
+
+        return false;
+    }
 
 	public int getSize() {
 		return size;

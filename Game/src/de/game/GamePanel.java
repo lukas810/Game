@@ -94,7 +94,7 @@ public class GamePanel extends JPanel implements Runnable {
 			int updateCount = 0;
 
 			while ((now - lastUpdateTime) > TBU && (updateCount < MUBR)) {
-				update();
+				update(now);
 				input(mouse, key);
 				lastUpdateTime += TBU;
 				updateCount++;
@@ -136,8 +136,8 @@ public class GamePanel extends JPanel implements Runnable {
 		}
 	}
 
-	private void update() {
-		gsm.update();
+	private void update(double time) {
+		gsm.update(time);
 	}
 
 	public void input(MouseHandler mouse, KeyHandler key) {

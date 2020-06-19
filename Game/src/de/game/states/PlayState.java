@@ -30,29 +30,46 @@ public class PlayState extends GameState {
 		map = new Vector2f();
 		Vector2f.setWorldVar(map.getX(), map.getY());
 
-
-		camera = new Camera(new AABB(new Vector2f(0, 0), GamePanel.WIDTH , GamePanel.HEIGHT ));
+		camera = new Camera(new AABB(new Vector2f(0, 0), GamePanel.WIDTH, GamePanel.HEIGHT + 16));
 		tileManager = new TileManager("tile/test.xml", camera);
 		font = new Font("font/font.png", 10, 10);
 		player = new Player(new Sprite("entity/link.png"),
 				new Vector2f(0 + (GamePanel.WIDTH / 2) - 32, 0 + (GamePanel.HEIGHT / 2) - 32), 64);
 		enemy = new Enemy(new Sprite("entity/enemy.png", 48, 48), new Vector2f(550, 75), 64, camera);
-		
+
 		camera.target(player);
 	}
 
 	@Override
-	public void update() {
+	public void update(double time) {
 		Vector2f.setWorldVar(map.getX(), map.getY());
-		player.update(enemy);
-		enemy.update(player);
-		camera.update();
+		if(!gsm.isStateActive(GameStateManager.PAUSE)) {
+			player.update(enemy, time);
+			enemy.update(player);
+			camera.update();
+			
+		}
 	}
 
 	@Override
 	public void input(MouseHandler mouse, KeyHandler key) {
-		player.input(key, mouse);
-		camera.input(key, mouse);
+
+		key.escape.tick();
+		
+		if(!gsm.isStateActive(GameStateManager.PAUSE)) {
+			if(camera.getTarget() == player) {
+				player.input(mouse, key);
+			}
+			camera.input(mouse, key);
+		}
+
+		if (key.escape.clicked) {
+			if (gsm.isStateActive(GameStateManager.PAUSE)) {
+				gsm.remove(GameStateManager.PAUSE);
+			} else {
+				gsm.add(GameStateManager.PAUSE);
+			}
+		}
 	}
 
 	@Override

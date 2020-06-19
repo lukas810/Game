@@ -24,9 +24,9 @@ public class Player extends Entity {
 
 	}
 
-	public void update(Enemy enemy) {
+	public void update(Enemy enemy, double time) {
 		super.update();
-
+		attacking = isAttacking(time);
 		if (attack && hitBounds.collides(enemy.getBounds())) {
 		}
 
@@ -86,11 +86,14 @@ public class Player extends Entity {
 		} else {
 			right = false;
 		}
-		if (key.attack.down) {
-			attack = true;
-		} else {
-			attack = false;
-		}
+		if(key.attack.down && canAttack) {
+            attack = true;
+            attacktime = System.nanoTime();
+        } else {
+            if(!attacking) {
+                attack = false;
+            }
+        }
 		//moonwalking
 		if (up && down) {
 			up = false;

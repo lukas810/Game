@@ -7,13 +7,13 @@ import de.game.utils.MouseHandler;
 
 public abstract class GameState {
 
-	private GameStateManager gsm;
+	protected GameStateManager gsm;
 
 	public GameState(GameStateManager gsm) {
 		this.setGsm(gsm);
 	}
 	
-	public abstract void update();
+	public abstract void update(double time);
 	
 	public abstract void input(MouseHandler mouse, KeyHandler key);
 	

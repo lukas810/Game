@@ -11,7 +11,7 @@ public class Window extends JFrame{
     private GamePanel gamepanel;
 
     public Window() {
-        setTitle("Decay");
+        
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setIgnoreRepaint(true);
         pack();
@@ -20,6 +20,7 @@ public class Window extends JFrame{
         setVisible(true);
     }
 
+    @Override
     public void addNotify() {
         super.addNotify();
 

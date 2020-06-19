@@ -140,7 +140,7 @@ public class Camera {
 		maxSpeed = entity.getMaxSpeed();
 	}
 
-	public void input(KeyHandler key, MouseHandler mouse) {
+	public void input(MouseHandler mouse, KeyHandler key) {
 		if (entity == null) {
 
 			if (key.up.down) {
@@ -233,5 +233,9 @@ public class Camera {
 	public Vector2f getPos() {
         return collisionCam.getPos();
     }
+	
+	 public Entity getTarget() {
+		 return entity;
+		 }
 
 }
