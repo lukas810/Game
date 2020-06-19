@@ -2,7 +2,10 @@ package de.game;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
@@ -24,22 +27,30 @@ public class GamePanel extends JPanel implements Runnable {
 
 	private BufferedImage img;
 	private Graphics2D g;
+	private BufferStrategy bs;
 
 	private MouseHandler mouse;
 	private KeyHandler key;
 
 	private GameStateManager gsm;
 
-	public GamePanel() {
+	public GamePanel(BufferStrategy bs) {
+		this.bs = bs;
 		setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		setFocusable(true);
 		requestFocus();
 	}
+	
+	  public void initGraphics() {
+	        img = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
+	        g = (Graphics2D) img.getGraphics();
+	        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+	    }
 
 	private void init() {
 		running = true;
-		img = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
-		g = (Graphics2D) img.getGraphics();
+		
+		initGraphics();
 
 		mouse = new MouseHandler(this);
 		key = new KeyHandler(this);
@@ -142,9 +153,13 @@ public class GamePanel extends JPanel implements Runnable {
 	}
 
 	private void draw() {
-		Graphics2D g2 = (Graphics2D) this.getGraphics();
-		g2.drawImage(img, 0, 0, WIDTH, HEIGHT, null);
-		g2.dispose();
+		do {
+            Graphics g2 = (Graphics) bs.getDrawGraphics();
+            g2.drawImage(img, 3, 26, WIDTH + 10, HEIGHT + 10, null); 
+            g2.dispose();
+            bs.show();
+        } while(bs.contentsLost());
+        
 	}
 
 }
