@@ -2,7 +2,7 @@ package de.game.tiles;
 
 import java.awt.Graphics2D;
 
-import de.game.graphics.Sprite;
+import de.game.graphics.SpriteSheet;
 import de.game.tiles.blocks.Block;
 import de.game.tiles.blocks.NormBlock;
 import de.game.utils.AABB;
@@ -17,7 +17,7 @@ public class TileMapNorm extends TileMap {
 
 	private int height;
 
-	public TileMapNorm(String data, Sprite sprite, int width, int height, int tileWidth, int tileHeight,
+	public TileMapNorm(String data, SpriteSheet sprite, int width, int height, int tileWidth, int tileHeight,
 			int tileColumns) {
 
 		blocks = new Block[width * height];
@@ -34,7 +34,7 @@ public class TileMapNorm extends TileMap {
 			if (temp != 0) {
 
 				blocks[i] = new NormBlock(
-						sprite.getSprite((int) ((temp - 1) % tileColumns), (int) ((temp - 1) / tileColumns)),
+						sprite.getNewSprite((int) ((temp - 1) % tileColumns), (int) ((temp - 1) / tileColumns)),
 						new Vector2f((int) (i % width) * tileWidth, (int) (i / height) * tileHeight), tileWidth,
 						tileHeight);
 

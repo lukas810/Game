@@ -1,11 +1,12 @@
 package de.game.utils;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-
 import de.game.GamePanel;
-import de.game.entity.Entity;
 import de.game.states.PlayState;
+import de.game.entity.Entity;
+import de.game.utils.Vector2f;
+import de.game.utils.AABB;
+
+import java.awt.Graphics;
 
 public class Camera {
 
@@ -18,16 +19,16 @@ public class Camera {
 
 	private float dx;
 	private float dy;
-	private float maxSpeed = 2.5f;
-	private float acc = 0.7f;
-	private float deacc = 0.7f;
+	private float maxSpeed = 8f;
+	private float acc = 3f;
+	private float deacc = 0.3f;
 
 	private int widthLimit;
 	private int heightLimit;
 
-	private int tileSize = 16;
+	private int tileSize = 64;
 
-	private Entity entity;
+	private Entity e;
 
 	public Camera(AABB collisionCam) {
 		this.collisionCam = collisionCam;
@@ -38,30 +39,44 @@ public class Camera {
 		this.heightLimit = heightLimit;
 	}
 
+	public void setTileSize(int tileSize) {
+		this.tileSize = tileSize;
+	}
+
+	public Entity getTarget() {
+		return e;
+	}
+
+	public Vector2f getPos() {
+		return collisionCam.getPos();
+	}
+
+	public AABB getBounds() {
+		return collisionCam;
+	}
+
 	public void update() {
 		move();
-		if (entity != null) {
-			if (!entity.xCol) {
-				if ((entity.getBounds().getPos().getWorldVar().getX() + dy) < Vector2f
+		if (e != null) {
+			if (!e.xCol) {
+				if ((e.getPos().getWorldVar().getX() + dy) < Vector2f
 						.getWorldVarX(widthLimit - collisionCam.getWidth() / 2) + tileSize
-						&& (entity.getBounds().getPos().getWorldVar().getX() + dy) > Vector2f
+						&& (e.getPos().getWorldVar().getX() + dy) > Vector2f
 								.getWorldVarX(GamePanel.WIDTH / 2 - tileSize * 2)) {
-
 					PlayState.map.setX(PlayState.map.getX() + dx);
 					collisionCam.getPos().setX(collisionCam.getPos().getX() + dx);
-
+					// bounds.getPos().x += dx;
 				}
 			}
-			if (!entity.yCol) {
-				if ((entity.getBounds().getPos().getWorldVar().getY() + dy) < Vector2f
+			if (!e.yCol) {
+				if ((e.getPos().getWorldVar().getY() + dy) < Vector2f
 						.getWorldVarY(heightLimit - collisionCam.getHeight() / 2) + tileSize
-						&& (entity.getBounds().getPos().getWorldVar().getY() + dy) > Vector2f
+						&& (e.getPos().getWorldVar().getY() + dy) > Vector2f
 								.getWorldVarY(GamePanel.HEIGHT / 2 - tileSize * 2)) {
 					PlayState.map.setY(PlayState.map.getY() + dy);
 					collisionCam.getPos().setY(collisionCam.getPos().getY() + dy);
-
+					// bounds.getPos().y += dy;
 				}
-
 			}
 		} else {
 			if (collisionCam.getPos().getX() + dx > 0 && collisionCam.getPos().getWorldVar().getX()
@@ -76,7 +91,6 @@ public class Camera {
 				collisionCam.getPos().setY(collisionCam.getPos().getY() + dy);
 			}
 		}
-
 	}
 
 	private void move() {
@@ -134,15 +148,26 @@ public class Camera {
 		}
 	}
 
-	public void target(Entity entity) {
-		this.entity = entity;
-		deacc = entity.getDeacc();
-		maxSpeed = entity.getMaxSpeed();
+	public void target(Entity e) {
+		this.e = e;
+		if (e != null) {
+			acc = e.getAcc();
+			deacc = e.getDeacc();
+			maxSpeed = e.getMaxSpeed();
+		} else {
+			acc = 3;
+			deacc = 0.3f;
+			maxSpeed = 8;
+		}
+	}
+
+	public void setMaxSpeed(int maxSpeed) {
+		this.maxSpeed = maxSpeed;
 	}
 
 	public void input(MouseHandler mouse, KeyHandler key) {
-		if (entity == null) {
 
+		if (e == null) {
 			if (key.up.down) {
 				up = true;
 			} else {
@@ -163,15 +188,14 @@ public class Camera {
 			} else {
 				right = false;
 			}
-
 		} else {
-			if (!entity.yCol) {
-				if (collisionCam.getPos().getY() + collisionCam.getHeight() / 2
-						+ dy > entity.getBounds().getPos().getY() + entity.getSize() / 2 + entity.getDy() + 2) {
+			if (!e.yCol) {
+				if (collisionCam.getPos().getY() + collisionCam.getHeight() / 2 + dy > e.getPos().getY()
+						+ e.getSize() / 2 + e.getDy() + 2) {
 					up = true;
 					down = false;
-				} else if (collisionCam.getPos().getY() + collisionCam.getHeight() / 2
-						+ dy < entity.getBounds().getPos().getY() + entity.getSize() / 2 + entity.getDy() - 2) {
+				} else if (collisionCam.getPos().getY() + collisionCam.getHeight() / 2 + dy < e.getPos().getY()
+						+ e.getSize() / 2 + e.getDy() - 2) {
 					down = true;
 					up = false;
 				} else {
@@ -181,13 +205,13 @@ public class Camera {
 				}
 			}
 
-			if (!entity.xCol) {
-				if (collisionCam.getPos().getX() + collisionCam.getWidth() / 2 + dx > entity.getBounds().getPos().getX()
-						+ entity.getSize() / 2 + entity.getDx() + 2) {
+			if (!e.xCol) {
+				if (collisionCam.getPos().getX() + collisionCam.getWidth() / 2 + dx > e.getPos().getX()
+						+ e.getSize() / 2 + e.getDx() + 2) {
 					left = true;
 					right = false;
-				} else if (collisionCam.getPos().getX() + collisionCam.getWidth() / 2
-						+ dx < entity.getBounds().getPos().getX() + entity.getSize() / 2 + entity.getDx() - 2) {
+				} else if (collisionCam.getPos().getX() + collisionCam.getWidth() / 2 + dx < e.getPos().getX()
+						+ e.getSize() / 2 + e.getDx() - 2) {
 					right = true;
 					left = false;
 				} else {
@@ -195,47 +219,23 @@ public class Camera {
 					right = false;
 					left = false;
 				}
-
 			}
 		}
 	}
 
-	public void render(Graphics2D g) {
-		g.setColor(Color.ORANGE);
-		g.drawRect((int) collisionCam.getPos().getWorldVar().getX(), (int) collisionCam.getPos().getWorldVar().getY(),
-				(int) collisionCam.getWidth(), (int) collisionCam.getHeight());
-	}
+	public void render(Graphics g) {
+		/*
+		 * g.setColor(Color.blue); g.drawRect((int)
+		 * collisionCam.getPos().getWorldVar().x, (int)
+		 * collisionCam.getPos().getWorldVar().y, (int) collisionCam.getWidth(), (int)
+		 * collisionCam.getHeight());
+		 */
 
-	public AABB getBounds() {
-		return collisionCam;
-	}
+		/*
+		 * g.setColor(Color.magenta); g.drawLine(GamePanel.width / 2, 0, GamePanel.width
+		 * / 2, GamePanel.height); g.drawLine(0, GamePanel.height / 2,
+		 * GamePanel.width,GamePanel.height / 2);
+		 */
 
-	public int getWidthLimit() {
-		return widthLimit;
 	}
-
-	public void setWidthLimit(int widthLimit) {
-		this.widthLimit = widthLimit;
-	}
-
-	public int getHeightLimit() {
-		return heightLimit;
-	}
-
-	public void setHeightLimit(int heightLimit) {
-		this.heightLimit = heightLimit;
-	}
-	
-	public void setTileSize(int tileSize) {
-		this.tileSize = tileSize;
-	}
-	
-	public Vector2f getPos() {
-        return collisionCam.getPos();
-    }
-	
-	 public Entity getTarget() {
-		 return entity;
-		 }
-
 }

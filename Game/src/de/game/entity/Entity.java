@@ -1,128 +1,202 @@
 package de.game.entity;
 
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-
 import de.game.graphics.Animation;
+import de.game.graphics.SpriteSheet;
 import de.game.graphics.Sprite;
-import de.game.utils.AABB;
-import de.game.utils.KeyHandler;
-import de.game.utils.MouseHandler;
-import de.game.utils.TileCollision;
 import de.game.utils.Vector2f;
+import de.game.utils.AABB;
+import de.game.utils.TileCollision;
 
-public abstract class Entity {
+import java.awt.Graphics2D;
 
-	private static final int RIGHT = 0;
-	private static final int LEFT = 1;
-	private static final int DOWN = 2;
-	private static final int UP = 3;
-//	private static final int FALLING = 4; unused
-	private static final int ATTACK = 5;
-	private static final int IDLE = 6;
+public abstract class Entity extends GameObject {
 
-	protected int currentDirection = DOWN;
+	public int IDLE = 6;
+	public int ATTACK = 5;
+	public int FALLEN = 4;
+	public int UP = 3;
+	public int DOWN = 2;
+	public int LEFT = 1;
+	public int RIGHT = 0;
+
+	protected boolean hasIdle = false;
+
+	protected int currentAnimation;
+	protected int currentDirection = RIGHT;
+
+	public boolean useRight = false;
 
 	protected Animation ani;
-	protected Sprite sprite;
-	protected Vector2f pos;
-	protected int size;
-	protected int currentAnimation;
+	protected int hitsize;
 
-	protected boolean up;
-	protected boolean down;
-	protected boolean right;
-	protected boolean left;
-	protected boolean attack;
-	protected boolean hasIdle = false;
-	
-	protected double attacktime;
-	protected boolean canAttack = true;
-	protected int attackSpeed = 1050;
-    protected int attackDuration = 650;
-    protected boolean attacking = false;
-
-	protected float dx;
-	protected float dy;
-	protected float maxSpeed;
-	protected float acc;
-	protected float deacc;
-
-	protected AABB hitBounds;
-	protected AABB bounds;
+	protected boolean up = false;
+	protected boolean down = false;
+	protected boolean right = false;
+	protected boolean left = false;
+	protected boolean attack = false;
+	protected boolean fallen = false;
 
 	public boolean xCol = false;
 	public boolean yCol = false;
 
-	protected TileCollision tileCollision;
+	protected int invincible = 500;
+	protected double invincibletime;
+	protected boolean isInvincible = false;
+	protected boolean die = false;
 
-	public Entity(Sprite sprite, Vector2f origin, int size) {
-		this.sprite = sprite;
-		pos = origin;
-		this.size = size;
+	protected int attackSpeed = 1050; // in milliseconds
+	protected int attackDuration = 650; // in milliseconds
+	protected double attacktime;
+	protected boolean canAttack = true;
+	protected boolean attacking = false;
 
-		bounds = new AABB(origin, size, size);
+	protected int maxHealth = 100;
+	protected int health = 100;
+	protected float healthpercent = 1;
+	protected int defense = 100;
+	protected int damage = 25;
+
+	protected AABB hitBounds;
+
+	public Entity(SpriteSheet sprite, Vector2f origin, int size) {
+		super(sprite, origin, 0, 0, size);
+		this.hitsize = size;
+
 		hitBounds = new AABB(origin, size, size);
 		hitBounds.setxOffset(size / 2);
 
 		ani = new Animation();
-		setAnimation(DOWN, sprite.getSpriteArrayAtIndex(DOWN), 10);
+		setAnimation(RIGHT, sprite.getSpriteArray(RIGHT), 10);
 
-		tileCollision = new TileCollision(this);
+		tc = new TileCollision(this);
 	}
 
-	public abstract void render(Graphics2D g);
-
-	public void input(MouseHandler mouse, KeyHandler key) {
-
+	public void setFallen(boolean b) {
+		fallen = b;
 	}
 
-	public void setAnimation(int i, BufferedImage[] frames, int delay) {
+	public void setHealth(int i, float f, boolean dir) {
+		if (!isInvincible) {
+			health = i;
+			isInvincible = true;
+			invincibletime = System.nanoTime();
+			if (health <= 0) {
+				die = true;
+			}
+
+			addForce(f, dir);
+
+			healthpercent = (float) health / (float) maxHealth;
+		}
+	}
+
+	public boolean getDeath() {
+		return die;
+	}
+
+	public int getHealth() {
+		return health;
+	}
+
+	public float getHealthPercent() {
+		return healthpercent;
+	}
+
+	public int getDefense() {
+		return defense;
+	}
+
+	public AABB getHitBounds() {
+		return hitBounds;
+	}
+
+	public int getDirection() {
+		if (currentDirection == UP || currentDirection == LEFT) {
+			return 1;
+		}
+		return -1;
+	}
+
+	public Animation getAnimation() {
+		return ani;
+	}
+
+	public void setAnimation(int i, Sprite[] frames, int delay) {
 		currentAnimation = i;
-		ani.setFrames(frames);
+		ani.setFrames(i, frames);
 		ani.setDelay(delay);
 	}
 
-	public void update() {
-		animate();
-		setHitBoxDirection();
-		ani.update();
+	public void animate() {
+
+		if (attacking) {
+			if (currentAnimation < 5) {
+				setAnimation(currentAnimation + ATTACK, sprite.getSpriteArray(currentAnimation + ATTACK),
+						attackDuration / 100);
+			}
+		} else if (up) {
+			if ((currentAnimation != UP || ani.getDelay() == -1)) {
+				setAnimation(UP, sprite.getSpriteArray(UP), 5);
+			}
+		} else if (down) {
+			if ((currentAnimation != DOWN || ani.getDelay() == -1)) {
+				setAnimation(DOWN, sprite.getSpriteArray(DOWN), 5);
+			}
+		} else if (left) {
+			if ((currentAnimation != LEFT || ani.getDelay() == -1)) {
+				setAnimation(LEFT, sprite.getSpriteArray(LEFT), 5);
+			}
+		} else if (right) {
+			if ((currentAnimation != RIGHT || ani.getDelay() == -1)) {
+				setAnimation(RIGHT, sprite.getSpriteArray(RIGHT), 5);
+			}
+		} else if (fallen) {
+			if (currentAnimation != FALLEN || ani.getDelay() == -1) {
+				setAnimation(FALLEN, sprite.getSpriteArray(FALLEN), 15);
+			}
+		} else {
+			if (!attacking && currentAnimation > 4) {
+				setAnimation(currentAnimation - ATTACK, sprite.getSpriteArray(currentAnimation - ATTACK), -1);
+			} else if (!attacking) {
+				if (hasIdle && currentAnimation != IDLE) {
+					setAnimation(IDLE, sprite.getSpriteArray(IDLE), 10);
+				} else if (!hasIdle) {
+					setAnimation(currentAnimation, sprite.getSpriteArray(currentAnimation), -1);
+				}
+			}
+		}
 	}
 
-    public void animate() {
+	private void setHitBoxDirection() {
+		if (up && !attacking) {
+			hitBounds.setxOffset((size - hitBounds.getWidth()) / 2);
+			hitBounds.setyOffset(-hitBounds.getHeight() / 2 + hitBounds.getxOffset());
+		} else if (down && !attacking) {
+			hitBounds.setxOffset((size - hitBounds.getWidth()) / 2);
+			hitBounds.setyOffset(hitBounds.getHeight() / 2 + hitBounds.getxOffset());
+		} else if (left && !attacking) {
+			hitBounds.setyOffset((size - hitBounds.getHeight()) / 2);
+			hitBounds.setxOffset(-hitBounds.getWidth() / 2 + hitBounds.getyOffset());
+		} else if (right && !attacking) {
+			hitBounds.setyOffset((size - hitBounds.getHeight()) / 2);
+			hitBounds.setxOffset(hitBounds.getWidth() / 2 + hitBounds.getyOffset());
+		}
+	}
 
-        if(attacking) {
-            if(currentAnimation < 5) {
-                setAnimation(currentAnimation + ATTACK, sprite.getSpriteArrayAtIndex(currentAnimation + ATTACK), attackDuration / 100);
-            }
-        } else if (up) {
-            if ((currentAnimation != UP || ani.getDelay() == -1)) {
-                setAnimation(UP, sprite.getSpriteArrayAtIndex(UP), 5);
-            }
-        } else if (down) {
-            if ((currentAnimation != DOWN || ani.getDelay() == -1)) {
-                setAnimation(DOWN, sprite.getSpriteArrayAtIndex(DOWN), 5);
-            }
-        } else if (left) {
-            if ((currentAnimation != LEFT || ani.getDelay() == -1)) {
-                setAnimation(LEFT, sprite.getSpriteArrayAtIndex(LEFT), 5);
-            }
-        } else if (right) {
-            if ((currentAnimation != RIGHT || ani.getDelay() == -1)) {
-                setAnimation(RIGHT, sprite.getSpriteArrayAtIndex(RIGHT), 5);
-            }
-        } else {
-            if(!attacking && currentAnimation > 4) {
-                setAnimation(currentAnimation - ATTACK, sprite.getSpriteArrayAtIndex(currentAnimation - ATTACK), -1);
-            } else if(!attacking) {
-                if(hasIdle && currentAnimation != IDLE) {
-                    setAnimation(IDLE, sprite.getSpriteArrayAtIndex(IDLE), 10);
-                } else if(!hasIdle) {
-                    setAnimation(currentAnimation, sprite.getSpriteArrayAtIndex(currentAnimation), -1);
-                }
-            }
-        }
-    }
+	protected boolean isAttacking(double time) {
+
+		if ((attacktime / 1000000) > ((time / 1000000) - attackSpeed)) {
+			canAttack = false;
+		} else {
+			canAttack = true;
+		}
+
+		if ((attacktime / 1000000) + attackDuration > (time / 1000000)) {
+			return true;
+		}
+
+		return false;
+	}
 
 	public void move() {
 		if (up) {
@@ -186,95 +260,17 @@ public abstract class Entity {
 		}
 	}
 
-    private void setHitBoxDirection() {
-        if (up && !attacking) {
-            hitBounds.setxOffset((size - hitBounds.getWidth()) / 2);
-            hitBounds.setyOffset(-hitBounds.getHeight() / 2 + hitBounds.getxOffset());
-        } else if (down && !attacking) {
-            hitBounds.setxOffset((size - hitBounds.getWidth()) / 2);
-            hitBounds.setyOffset(hitBounds.getHeight() / 2 + hitBounds.getxOffset());
-        } else if (left && !attacking) {
-            hitBounds.setyOffset((size - hitBounds.getHeight()) / 2);
-            hitBounds.setxOffset(-hitBounds.getWidth() / 2 + hitBounds.getyOffset()); 
-        } else if (right && !attacking) {
-            hitBounds.setyOffset((size - hitBounds.getHeight()) / 2);
-            hitBounds.setxOffset(hitBounds.getWidth() / 2 + hitBounds.getyOffset());
-        }
-    }
-    
-    protected boolean isAttacking(double time) {
-
-        if((attacktime / 1000000) > ((time / 1000000) - attackSpeed)) {
-            canAttack = false;
-        } else {
-            canAttack = true;
-        }
-
-        if((attacktime / 1000000) + attackDuration > (time / 1000000)) {
-            return true;
-        }
-
-        return false;
-    }
-
-	public int getSize() {
-		return size;
+	public void update(double time) {
+		if (isInvincible) {
+			if ((invincibletime / 1000000) + invincible < (time / 1000000)) {
+				isInvincible = false;
+			}
+		}
+		animate();
+		setHitBoxDirection();
+		ani.update();
 	}
 
-	public Animation getAnimation() {
-		return ani;
-	}
-
-	public void setSprite(Sprite sprite) {
-		this.sprite = sprite;
-	}
-
-	public AABB getBounds() {
-		return bounds;
-	}
-
-	public void setSize(int size) {
-		this.size = size;
-	}
-
-	public void setMaxSpeed(float maxSpeed) {
-		this.maxSpeed = maxSpeed;
-	}
-
-	public void setAcc(float acc) {
-		this.acc = acc;
-	}
-
-	public void setDeacc(float deacc) {
-		this.deacc = deacc;
-	}
-
-	public float getMaxSpeed() {
-		return maxSpeed;
-	}
-
-	public float getAcc() {
-		return acc;
-	}
-
-	public float getDeacc() {
-		return deacc;
-	}
-
-	public float getDx() {
-		return dx;
-	}
-
-	public void setDx(float dx) {
-		this.dx = dx;
-	}
-
-	public float getDy() {
-		return dy;
-	}
-
-	public void setDy(float dy) {
-		this.dy = dy;
-	}
+	public abstract void render(Graphics2D g);
 
 }

@@ -2,7 +2,7 @@ package de.game.tiles;
 
 import java.awt.Graphics2D;
 
-import de.game.graphics.Sprite;
+import de.game.graphics.SpriteSheet;
 import de.game.tiles.blocks.Block;
 import de.game.tiles.blocks.ObjectBlock;
 import de.game.utils.AABB;
@@ -18,7 +18,7 @@ public class TileMapObject extends TileMap {
 	public static int width;
 	public static int height;
 
-	public TileMapObject(String data, Sprite sprite, int width, int height, int tileWidth, int tileHeight,
+	public TileMapObject(String data, SpriteSheet sprite, int width, int height, int tileWidth, int tileHeight,
 			int tileColumns) {
 
 		Block tempBlock;

@@ -2,7 +2,11 @@ package de.game.entity;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 
+import de.game.graphics.SpriteSheet;
+import de.game.tiles.TileManager;
+import de.game.tiles.blocks.NormBlock;
 import de.game.graphics.Sprite;
 import de.game.utils.KeyHandler;
 import de.game.utils.MouseHandler;
@@ -10,8 +14,13 @@ import de.game.utils.Vector2f;
 
 public class Player extends Entity {
 
-	public Player(Sprite sprite, Vector2f origin, int size) {
+	private ArrayList<Enemy> enemy;
+	private ArrayList<GameObject> go;
+	private TileManager tm;
+
+	public Player(SpriteSheet sprite, Vector2f origin, int size, TileManager tm) {
 		super(sprite, origin, size);
+		this.tm = tm;
 
 		maxSpeed = 2.5f;
 		acc = 0.7f;
@@ -22,16 +31,57 @@ public class Player extends Entity {
 		bounds.setxOffset(12);
 		bounds.setyOffset(40);
 
-	}
+		hitBounds.setWidth(42);
+		hitBounds.setHeight(42);
 
-	public void update(Enemy enemy, double time) {
-		super.update();
+		ani.setNumFrames(8, RIGHT);
+		ani.setNumFrames(8, LEFT);
+		ani.setNumFrames(8, UP);
+		ani.setNumFrames(8, DOWN);
+		ani.setNumFrames(8, ATTACK + RIGHT);
+		ani.setNumFrames(8, ATTACK + LEFT);
+		ani.setNumFrames(8, ATTACK + UP);
+		ani.setNumFrames(8, ATTACK + DOWN);
+
+		enemy = new ArrayList<Enemy>();
+		go = new ArrayList<GameObject>();
+
+		for (int i = 0; i < sprite.getSpriteArray2().length; i++) {
+			for (int j = 0; j < sprite.getSpriteArray2()[i].length; j++) {
+				sprite.getSpriteArray2()[i][j].setEffect(Sprite.effect.NEGATIVE);
+				sprite.getSpriteArray2()[i][j].saveColors();
+			}
+		}
+
+		hasIdle = false;
+		health = 500;
+		maxHealth = 500;
+
+	}
+	
+	public void setTargetEnemy(Enemy enemy) { 
+        this.enemy.add(enemy);
+    }
+
+    public void setTargetGameObject(GameObject go) {
+        if(!this.go.contains(go))
+            this.go.add(go);
+    }
+
+    @Override
+	public void update(double time) {
+		super.update(time);
 		attacking = isAttacking(time);
-		if (attack && hitBounds.collides(enemy.getBounds())) {
+		for (int i = 0; i < enemy.size(); i++) {
+			if (attacking) {
+				enemy.get(i).setHealth(enemy.get(i).getHealth() - damage, force * getDirection(),
+						currentDirection == UP || currentDirection == DOWN);
+				enemy.remove(i);
+			}
 		}
 
 		move();
-		if (!tileCollision.collisionTile(dx, 0)) {
+		if (!tc.tileCollision(dx, 0) && !bounds.collides(dx, 0, go)) {
 
 			pos.setX(pos.getX() + dx);
 			xCol = false;
@@ -39,12 +89,21 @@ public class Player extends Entity {
 		} else {
 			xCol = true;
 		}
-		if (!tileCollision.collisionTile(0, dy)) {
+		if (!tc.tileCollision(0, dy) && !bounds.collides(0, dy, go)) {
 			pos.setY(pos.getY() + dy);
 			yCol = false;
 		} else {
 			yCol = true;
 		}
+		
+		tc.normalTile(dx, 0);
+        tc.normalTile(0, dy);
+        
+        NormBlock[] block = tm.getNormalTile(tc.getTile());
+        for(int i = 0; i < block.length; i++) {
+            if(block[i] != null)
+                block[i].getImage().restoreDefault();
+        }
 	}
 
 	@Override
@@ -60,10 +119,13 @@ public class Player extends Entity {
 					(int) (hitBounds.getPos().getWorldVar().getY() + hitBounds.getyOffset()),
 					(int) hitBounds.getWidth(), (int) hitBounds.getHeight());
 		}
-		g.drawImage(ani.getImage(), (int) pos.getWorldVar().getX(), (int) pos.getWorldVar().getY(), size, size, null);
+		if(useRight && left) {
+            g.drawImage(ani.getImage().image, (int) (pos.getWorldVar().getX()) + size, (int) (pos.getWorldVar().getY()), -size, size, null);
+        } else {
+            g.drawImage(ani.getImage().image, (int) (pos.getWorldVar().getX()), (int) (pos.getWorldVar().getY()), size, size, null);
+        }
 	}
 
-	@Override
 	public void input(MouseHandler mouse, KeyHandler key) {
 
 		if (key.up.down) {
@@ -86,15 +148,15 @@ public class Player extends Entity {
 		} else {
 			right = false;
 		}
-		if(key.attack.down && canAttack) {
-            attack = true;
-            attacktime = System.nanoTime();
-        } else {
-            if(!attacking) {
-                attack = false;
-            }
-        }
-		//moonwalking
+		if (key.attack.down && canAttack) {
+			attack = true;
+			attacktime = System.nanoTime();
+		} else {
+			if (!attacking) {
+				attack = false;
+			}
+		}
+		// moonwalking
 		if (up && down) {
 			up = false;
 			down = false;

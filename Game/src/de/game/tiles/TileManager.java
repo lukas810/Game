@@ -12,18 +12,18 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import de.game.graphics.Sprite;
+import de.game.graphics.SpriteSheet;
+import de.game.tiles.blocks.NormBlock;
 import de.game.utils.Camera;
 
 public class TileManager {
 
 	public static ArrayList<TileMap> tilemap;
-	
+
 	private Camera camera;
 
-	public TileManager() {
-		tilemap = new ArrayList<TileMap>();
-	}
+	private int width;
+	private int height;
 
 	public TileManager(String path, Camera camera) {
 		tilemap = new ArrayList<TileMap>();
@@ -39,8 +39,8 @@ public class TileManager {
 		int tileHeight;
 		int tileColumns;
 		int layers = 0;
-		Sprite sprite;
-		
+		SpriteSheet sprite;
+
 		camera.setTileSize(blockWidth);
 
 		String[] data = new String[3];
@@ -63,7 +63,7 @@ public class TileManager {
 
 			list = document.getElementsByTagName("image");
 
-			sprite = new Sprite("tile/" + imagePath + ".png", tileWidth, tileHeight);
+			sprite = new SpriteSheet("tile/" + imagePath + ".png", tileWidth, tileHeight);
 
 			list = document.getElementsByTagName("layer");
 			layers = list.getLength();
@@ -87,7 +87,7 @@ public class TileManager {
 							new TileMapObject(data[i], sprite, width, height, blockWidth, blockHeight, tileColumns));
 				}
 
-				camera.setLimit(width * blockWidth -64, height * blockHeight - 48);
+				camera.setLimit(width * blockWidth, height * blockHeight);
 			}
 
 		} catch (Exception e) {
@@ -96,8 +96,27 @@ public class TileManager {
 
 	}
 
+	public NormBlock[] getNormalTile(int id) {
+		int normMap = 1;
+		if (tilemap.size() < 2)
+			normMap = 0;
+		NormBlock[] block = new NormBlock[9];
+
+		int i = 0;
+		for (int x = 1; x > -2; x--) {
+			for (int y = 1; y > -2; y--) {
+				if (id + (y + x * height) < 0 || id + (y + x * height) > (width * height) - 2)
+					continue;
+				block[i] = (NormBlock) tilemap.get(normMap).getBlocks()[id + (y + x * height)];
+				i++;
+			}
+		}
+
+		return block;
+	}
+
 	public void render(Graphics2D g) {
-		if(camera == null) {
+		if (camera == null) {
 			return;
 		}
 		for (int i = 0; i < tilemap.size(); i++) {

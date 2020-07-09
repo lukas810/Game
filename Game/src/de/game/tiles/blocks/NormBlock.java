@@ -1,14 +1,14 @@
 package de.game.tiles.blocks;
 
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 
+import de.game.graphics.Sprite;
 import de.game.utils.AABB;
 import de.game.utils.Vector2f;
 
 public class NormBlock extends Block {
 
-	public NormBlock(BufferedImage image, Vector2f pos, int width, int height) {
+	public NormBlock(Sprite image, Vector2f pos, int width, int height) {
 		super(image, pos, width, height);
 
 	}
@@ -20,5 +20,10 @@ public class NormBlock extends Block {
 
 	public void render(Graphics2D g) {
 		super.render(g);
+	}
+
+	@Override
+	public Sprite getImage() {
+		return image;
 	}
 }

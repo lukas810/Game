@@ -5,7 +5,6 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-
 public class Font {
 
 	private BufferedImage fontsheet;
@@ -61,21 +60,12 @@ public class Font {
 		return fontsheet.getSubimage(x * width, y * height, width, height);
 	}
 
-	public BufferedImage getFont(char letter) {
+	public BufferedImage getLetter(char letter) {
 		int value = letter;
 
 		int x = value % letterWidth;
 		int y = value / letterWidth;
-
 		return getLetter(x, y);
-	}
-
-	public BufferedImage[] getFontArrayAtIndex(int i) {
-		return fontArray[i];
-	}
-
-	public BufferedImage[][] getFontArray2() {
-		return fontArray;
 	}
 
 	public void setSize(int width, int height) {
