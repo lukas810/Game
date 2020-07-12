@@ -1,6 +1,5 @@
 package de.game.tiles.blocks;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 
 import de.game.graphics.Sprite;
@@ -20,8 +19,7 @@ public class ObjectBlock extends Block {
 
 	public void render(Graphics2D g) {
 		super.render(g);
-		g.setColor(Color.WHITE);
-		g.drawRect((int) pos.getWorldVar().getX(), (int) pos.getWorldVar().getY(), width, height);
+
 	}
 
 	@Override

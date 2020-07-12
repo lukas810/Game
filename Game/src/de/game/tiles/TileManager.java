@@ -1,7 +1,6 @@
 package de.game.tiles;
 
 import java.awt.Graphics2D;
-import java.io.File;
 import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -48,7 +47,8 @@ public class TileManager {
 
 			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = builderFactory.newDocumentBuilder();
-			Document document = builder.parse(new File(getClass().getClassLoader().getResource(path).toURI()));
+//			Document document = builder.parse(new File(getClass().getClassLoader().getResource(path).toURI()));
+			Document document = builder.parse(getClass().getClassLoader().getResourceAsStream(path));
 			document.getDocumentElement().normalize();
 			NodeList list = document.getElementsByTagName("tileset");
 
