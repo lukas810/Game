@@ -4,13 +4,14 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
+import de.game.GamePanel;
 import de.game.graphics.SpriteSheet;
 import de.game.tiles.TileManager;
 import de.game.tiles.blocks.NormBlock;
-import de.game.graphics.Sprite;
 import de.game.utils.KeyHandler;
 import de.game.utils.MouseHandler;
 import de.game.utils.Vector2f;
+import de.game.graphics.Sprite;;
 
 public class Player extends Entity {
 
@@ -46,22 +47,20 @@ public class Player extends Entity {
 		enemy = new ArrayList<Enemy>();
 		go = new ArrayList<GameObject>();
 
-		for (int i = 0; i < sprite.getSpriteArray2().length; i++) {
-			for (int j = 0; j < sprite.getSpriteArray2()[i].length; j++) {
-				sprite.getSpriteArray2()[i][j].setEffect(Sprite.effect.NEGATIVE);
-				sprite.getSpriteArray2()[i][j].saveColors();
-			}
-		}
-
 		hasIdle = false;
-		health = 500;
-		maxHealth = 500;
+		health = 100;
+		maxHealth = 100;
+		damage = 10;
 
 	}
 	
 	public void setTargetEnemy(Enemy enemy) { 
         this.enemy.add(enemy);
     }
+	
+	public void removeTargetEnemy(Enemy enemy) {
+		this.enemy.remove(enemy);
+	}
 
     public void setTargetGameObject(GameObject go) {
         if(!this.go.contains(go))
@@ -76,7 +75,9 @@ public class Player extends Entity {
 			if (attacking) {
 				enemy.get(i).setHealth(enemy.get(i).getHealth() - damage, force * getDirection(),
 						currentDirection == UP || currentDirection == DOWN);
-				enemy.remove(i);
+				if(enemy.get(i).getHealth() <= 0) {
+					enemy.remove(i);
+				}
 			}
 		}
 
@@ -119,11 +120,29 @@ public class Player extends Entity {
 					(int) (hitBounds.getPos().getWorldVar().getY() + hitBounds.getyOffset()),
 					(int) hitBounds.getWidth(), (int) hitBounds.getHeight());
 		}
+		
+		if(isInvincible) {
+            if(GamePanel.tickCount % 30 >= 15) {
+                ani.getImage().setEffect(Sprite.effect.REDISH);
+            } else {
+                ani.getImage().restoreColors();
+            }
+        } else {
+            ani.getImage().restoreColors();
+        }
 		if(useRight && left) {
             g.drawImage(ani.getImage().image, (int) (pos.getWorldVar().getX()) + size, (int) (pos.getWorldVar().getY()), -size, size, null);
         } else {
             g.drawImage(ani.getImage().image, (int) (pos.getWorldVar().getX()), (int) (pos.getWorldVar().getY()), size, size, null);
         }
+		
+		g.setColor(Color.red);
+		g.fillRect((int) (pos.getWorldVar().getX() + bounds.getxOffset() +5), (int) (pos.getWorldVar().getY()),
+				24, 5);
+
+		g.setColor(Color.green);
+		g.fillRect((int) (pos.getWorldVar().getX() + bounds.getxOffset() +5), (int) (pos.getWorldVar().getY()),
+				(int) (24 * healthpercent), 5);
 	}
 
 	public void input(MouseHandler mouse, KeyHandler key) {

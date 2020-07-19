@@ -21,6 +21,8 @@ public class GamePanel extends JPanel implements Runnable {
 	public static final int HEIGHT = 500;
 
 	public static int oldFrameCount;
+	public static int oldTickCount;
+	public static int tickCount;
 
 	private Thread thread;
 	private boolean running = false;
@@ -40,16 +42,16 @@ public class GamePanel extends JPanel implements Runnable {
 		setFocusable(true);
 		requestFocus();
 	}
-	
-	  public void initGraphics() {
-	        img = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
-	        g = (Graphics2D) img.getGraphics();
-	        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-	    }
+
+	public void initGraphics() {
+		img = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
+		g = (Graphics2D) img.getGraphics();
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+	}
 
 	private void init() {
 		running = true;
-		
+
 		initGraphics();
 
 		mouse = new MouseHandler(this);
@@ -88,6 +90,9 @@ public class GamePanel extends JPanel implements Runnable {
 
 		oldFrameCount = 0;
 
+		tickCount = 0;
+		oldTickCount = 0;
+
 		while (running) {
 
 			double now = System.nanoTime();
@@ -98,6 +103,7 @@ public class GamePanel extends JPanel implements Runnable {
 				input(mouse, key);
 				lastUpdateTime += TBU;
 				updateCount++;
+				tickCount++;
 
 			}
 
@@ -118,6 +124,11 @@ public class GamePanel extends JPanel implements Runnable {
 				if (frameCount != oldFrameCount) {
 					oldFrameCount = frameCount;
 				}
+				
+				 if (tickCount != oldTickCount) {
+	                    oldTickCount = tickCount;
+	                }
+				 tickCount = 0;
 				frameCount = 0;
 				lastSecondTime = thisSecond;
 			}
@@ -146,7 +157,7 @@ public class GamePanel extends JPanel implements Runnable {
 
 	private void render() {
 		if (g != null) {
-			g.setColor(new Color(66, 134, 244));
+			g.setColor(Color.BLACK);
 			g.fillRect(0, 0, WIDTH, HEIGHT);
 			gsm.render(g);
 		}
@@ -154,12 +165,12 @@ public class GamePanel extends JPanel implements Runnable {
 
 	private void draw() {
 		do {
-            Graphics g2 = (Graphics) bs.getDrawGraphics();
-            g2.drawImage(img, 3, 26, WIDTH + 10, HEIGHT + 10, null); 
-            g2.dispose();
-            bs.show();
-        } while(bs.contentsLost());
-        
+			Graphics g2 = (Graphics) bs.getDrawGraphics();
+			g2.drawImage(img, 3, 26, WIDTH + 10, HEIGHT + 10, null);
+			g2.dispose();
+			bs.show();
+		} while (bs.contentsLost());
+
 	}
 
 }

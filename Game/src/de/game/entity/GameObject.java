@@ -1,5 +1,7 @@
 package de.game.entity;
 
+import java.awt.Graphics2D;
+
 import de.game.graphics.Sprite;
 import de.game.graphics.SpriteSheet;
 import de.game.utils.AABB;
@@ -22,7 +24,7 @@ public abstract class GameObject {
 	protected float maxSpeed = 4f;
 	protected float acc = 2f;
 	protected float deacc = 0.3f;
-	protected float force = 25f;
+	protected float force = 15f;
 
 	protected TileCollision tc;
 
@@ -41,18 +43,24 @@ public abstract class GameObject {
 		this.pos = origin;
 		this.size = size;
 	}
-	
+
 	public void addForce(float a, boolean vertical) {
-		if (!vertical) {
-			dx -= a;
-		} else {
-			dy -= a;
+		if (!tc.tileCollision(dx, 0) && !tc.tileCollision(0, dy)) {
+			if (!vertical) {
+				dx -= a;
+			} else {
+				dy -= a;
+			}
 		}
 	}
 
 	public void setPos(Vector2f pos) {
 		this.pos = pos;
 		this.bounds = new AABB(pos, size, size);
+	}
+
+	public void render(Graphics2D g) {
+		g.drawImage(image.image, (int) (pos.getWorldVar().getX()), (int) (pos.getWorldVar().getY()), size, size, null);
 	}
 
 	public Sprite getImage() {

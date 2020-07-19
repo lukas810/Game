@@ -11,18 +11,17 @@ import java.awt.Graphics2D;
 
 public abstract class Entity extends GameObject {
 
-	public int IDLE = 6;
-	public int ATTACK = 5;
-	public int FALLEN = 4;
-	public int UP = 3;
-	public int DOWN = 2;
-	public int LEFT = 1;
-	public int RIGHT = 0;
+	protected int RIGHT = 0;
+	protected int LEFT = 1;
+	protected int DOWN = 2;
+	protected int UP = 3;
+	protected int ATTACK = 5;
+	protected int IDLE = 6;
 
 	protected boolean hasIdle = false;
 
 	protected int currentAnimation;
-	protected int currentDirection = RIGHT;
+	protected int currentDirection = DOWN;
 
 	public boolean useRight = false;
 
@@ -34,21 +33,20 @@ public abstract class Entity extends GameObject {
 	protected boolean right = false;
 	protected boolean left = false;
 	protected boolean attack = false;
-	protected boolean fallen = false;
 
 	public boolean xCol = false;
 	public boolean yCol = false;
-
-	protected int invincible = 500;
-	protected double invincibletime;
-	protected boolean isInvincible = false;
-	protected boolean die = false;
 
 	protected int attackSpeed = 1050; // in milliseconds
 	protected int attackDuration = 650; // in milliseconds
 	protected double attacktime;
 	protected boolean canAttack = true;
 	protected boolean attacking = false;
+
+	protected int invincible = 500;
+	protected double invincibletime;
+	protected boolean isInvincible = false;
+	protected boolean die = false;
 
 	protected int maxHealth = 100;
 	protected int health = 100;
@@ -66,13 +64,9 @@ public abstract class Entity extends GameObject {
 		hitBounds.setxOffset(size / 2);
 
 		ani = new Animation();
-		setAnimation(RIGHT, sprite.getSpriteArray(RIGHT), 10);
+		setAnimation(DOWN, sprite.getSpriteArray(DOWN), 10);
 
 		tc = new TileCollision(this);
-	}
-
-	public void setFallen(boolean b) {
-		fallen = b;
 	}
 
 	public void setHealth(int i, float f, boolean dir) {
@@ -150,10 +144,7 @@ public abstract class Entity extends GameObject {
 			if ((currentAnimation != RIGHT || ani.getDelay() == -1)) {
 				setAnimation(RIGHT, sprite.getSpriteArray(RIGHT), 5);
 			}
-		} else if (fallen) {
-			if (currentAnimation != FALLEN || ani.getDelay() == -1) {
-				setAnimation(FALLEN, sprite.getSpriteArray(FALLEN), 15);
-			}
+
 		} else {
 			if (!attacking && currentAnimation > 4) {
 				setAnimation(currentAnimation - ATTACK, sprite.getSpriteArray(currentAnimation - ATTACK), -1);
@@ -271,6 +262,7 @@ public abstract class Entity extends GameObject {
 		ani.update();
 	}
 
+	@Override
 	public abstract void render(Graphics2D g);
 
 }

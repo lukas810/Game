@@ -15,15 +15,15 @@ public class Sprite {
 	private int width;
 
 	public enum effect {
-		NORMAL, SEPIA, REDISH, GRAYSCALE, NEGATIVE, TEST
-	};
+		NORMAL, SEPIA, REDISH, GRAYSCALE, NEGATIVE, DARK, TEST;
+	}
 
 	private float[][] id = { { 1.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 0.0f } };
 
-	private float[][] negative = { { 1.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f },
+	private float[][] negative = { { 1.0f, -1.0f, 1.0f }, { -1.0f, -1.0f, 0.0f }, { 0.0f, 0.0f, -1.0f },
 			{ 0.0f, 0.0f, 0.0f } };
 
-	private float[][] test = { { 0.000f, 0.333f, 0.333f }, { 0.333f, 0.000f, 0.333f }, { 0.333f, 0.333f, 0.000f },
+	private float[][] dark = { { 0.000f, 0.333f, 0.333f }, { 0.333f, 0.000f, 0.333f }, { 0.333f, 0.333f, 0.000f },
 			{ 0.000f, 0.000f, 0.000f } };
 
 	private float[][] sepia = { { 0.393f, 0.349f, 0.272f }, { 0.769f, 0.686f, 0.534f }, { 0.189f, 0.168f, 0.131f },
@@ -34,6 +34,9 @@ public class Sprite {
 
 	private float[][] grayscale = { { 0.333f, 0.333f, 0.333f }, { 0.333f, 0.333f, 0.333f }, { 0.333f, 0.333f, 0.333f },
 			{ 0.000f, 0.000f, 0.000f } };
+	
+	private float[][] test = { { 1.0f, 1.0f, 0.0f }, { 1.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f },
+			{ 0.0f, 0.0f, 0.0f } };
 
 	private float[][] currentEffect = id;
 
@@ -97,6 +100,9 @@ public class Sprite {
 			break;
 		case NEGATIVE:
 			effect = negative;
+			break;
+		case DARK:
+			effect = dark;
 			break;
 		case TEST:
 			effect = test;
