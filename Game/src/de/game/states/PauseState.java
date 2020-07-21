@@ -36,6 +36,9 @@ public class PauseState extends GameState {
 		buttonExit.addHoverImage(
 				buttonExit.createButton("Exit", imgHover, font, buttonExit.getWidth(), buttonExit.getHeight(), 58, 12));
 
+		buttonExit.addEvent(e -> {
+			System.exit(0);
+		});
 	}
 
 	@Override
