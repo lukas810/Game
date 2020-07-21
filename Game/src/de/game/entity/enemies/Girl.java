@@ -14,7 +14,7 @@ public class Girl extends Enemy {
 		deacc = 0.7f;
 		maxSpeed = 1f;
 		damage = 10;
-		r_sense = 350;
+		r_sense = 400;
 		r_attackrange = 32;
 		health = 100;
 		

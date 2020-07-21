@@ -23,10 +23,11 @@ public class Enemy extends Entity {
 	protected int yOffset;
 
 	protected ArrayList<GameObject> collisions;
-
+	
 	public Enemy(SpriteSheet sprite, Vector2f origin, int size, Camera camera) {
 		super(sprite, origin, size);
 		this.camera = camera;
+		
 
 		sense = new AABB(new Vector2f(origin.getX() + size / 2 - r_sense / 2, origin.getY() + size / 2 - r_sense / 2),
 				r_sense);
@@ -129,6 +130,9 @@ public class Enemy extends Entity {
 				g.drawImage(ani.getImage().image, (int) (pos.getWorldVar().getX()), (int) (pos.getWorldVar().getY()),
 						size, size, null);
 			}
+			
+			g.setColor(Color.WHITE);
+			g.drawOval((int)pos.getWorldVar().getX() + size / 2 - r_sense / 2,(int) pos.getWorldVar().getY() + size / 2 - r_sense / 2, r_sense, r_sense);
 
 			// Health Bar UI
 			g.setColor(Color.RED);

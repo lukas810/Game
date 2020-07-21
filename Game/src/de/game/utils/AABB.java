@@ -115,6 +115,24 @@ public class AABB {
 		return true;
 	}
 	
+	public boolean inside(int xp, int yp) {
+        if(xp == -1 || yp == - 1) return false;
+
+        int wTemp = (int) this.width;
+        int hTemp = (int) this.height;
+        int x = (int) this.pos.getX();
+        int y = (int) this.pos.getY();
+
+        if(xp < x || yp < y) {
+            return false;
+        }
+
+        wTemp += x;
+        hTemp += y;
+        return ((wTemp < x || wTemp > xp) && (hTemp < y || hTemp > yp));
+    }
+
+	
 	public float distance(Vector2f other) {
 		float dx = pos.getX() - other.getX();
 		float dy = pos.getY() - other.getY();

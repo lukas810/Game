@@ -4,7 +4,6 @@ import java.awt.Graphics2D;
 
 import de.game.GamePanel;
 import de.game.entity.Enemy;
-import de.game.entity.GameObject;
 import de.game.entity.Player;
 import de.game.entity.enemies.Girl;
 import de.game.graphics.Font;
@@ -45,12 +44,12 @@ public class PlayState extends GameState {
 		player = new Player(new SpriteSheet("entity/link.png", 32, 32),
 				new Vector2f(GamePanel.WIDTH / 2 - 48, GamePanel.HEIGHT / 2 - 16), 64, tileManager);
 		aabbTree.insert(player);
-		for (int i = 0; i < 2; i++) {
-			GameObject go = new Girl(new SpriteSheet("entity/enemy.png", 48, 48), new Vector2f(400, 40 * i + 20), 64,
+		for (int i = 0; i < 1; i++) {
+			Enemy enemy = new Girl(new SpriteSheet("entity/enemy.png", 48, 48), new Vector2f(400, 40 * i + 20), 64,
 					camera);
 
-			gameObjectHeap.add(go.getBounds().distance(player.getPos()), go);
-			aabbTree.insert(go);
+			gameObjectHeap.add(enemy.getBounds().distance(player.getPos()), enemy);
+			aabbTree.insert(enemy);
 		}
 		camera.target(player);
 	}

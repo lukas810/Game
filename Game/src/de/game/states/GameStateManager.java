@@ -3,6 +3,7 @@ package de.game.states;
 import java.awt.Graphics2D;
 
 import de.game.GamePanel;
+import de.game.graphics.SpriteSheet;
 import de.game.utils.AABB;
 import de.game.utils.Camera;
 //import de.game.graphics.Font;
@@ -23,6 +24,8 @@ public class GameStateManager {
 	
 	public static Camera camera;
     public static Graphics2D g;
+    
+    public static SpriteSheet button;
 
 
 	public GameStateManager(Graphics2D g) {
@@ -30,6 +33,8 @@ public class GameStateManager {
 		map = new Vector2f(GamePanel.WIDTH, GamePanel.HEIGHT);
 		Vector2f.setWorldVar(map.getX(), map.getY());
 		states = new GameState[4];
+		
+		button = new SpriteSheet("ui/buttons.png", 122, 57);
 		
 		camera = new Camera(new AABB(new Vector2f(-32, -32), GamePanel.WIDTH + 64, GamePanel.HEIGHT + 64));
 
