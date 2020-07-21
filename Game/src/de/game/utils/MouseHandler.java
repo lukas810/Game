@@ -14,6 +14,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener{
 	
 	public  MouseHandler(GamePanel game) {
 		game.addMouseListener(this);
+		game.addMouseMotionListener(this);
 	}
 	
 	
@@ -52,7 +53,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener{
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		mouseB = e.getButton();
+		mouseB = -1;
 	}
 
 
