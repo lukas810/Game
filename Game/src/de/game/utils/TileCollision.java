@@ -8,6 +8,8 @@ public class TileCollision {
 
 	private Entity entity;
 	private int tileId;
+	
+	private final int tileSize = 16;
 
 	public TileCollision(Entity entity) {
 		this.entity = entity;
@@ -18,8 +20,8 @@ public class TileCollision {
 		int xt;
 		int yt;
 
-		xt = (int) ((entity.getPos().getX() + ax) + entity.getBounds().getxOffset()) / 16;
-		yt = (int) ((entity.getPos().getY() + ay) + entity.getBounds().getyOffset()) / 16;
+		xt = (int) ((entity.getPos().getX() + ax) + entity.getBounds().getxOffset()) / tileSize;
+		yt = (int) ((entity.getPos().getY() + ay) + entity.getBounds().getyOffset()) / tileSize;
 		tileId = (xt + (yt * TileMapObject.height));
 
 		if (tileId > TileMapObject.height * TileMapObject.width)
@@ -32,9 +34,9 @@ public class TileCollision {
 		if (TileMapObject.eventBlocks != null) {
 			for (int i = 0; i < 4; i++) {
 				int xt = (int) ((entity.getBounds().getPos().getX() + ax) + (i % 2) * entity.getBounds().getWidth()
-						+ entity.getBounds().getxOffset()) / 16;
+						+ entity.getBounds().getxOffset()) / tileSize;
 				int yt = (int) ((entity.getBounds().getPos().getY() + ay) + (i / 2) * entity.getBounds().getHeight()
-						+ entity.getBounds().getyOffset()) / 16;
+						+ entity.getBounds().getyOffset()) / tileSize;
 
 				if (xt <= 0 || yt <= 0 || xt + (yt * TileMapObject.height) < 0
 						|| xt + (yt * TileMapObject.height) > (TileMapObject.height * TileMapObject.width) - 2) {

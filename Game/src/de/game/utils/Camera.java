@@ -26,7 +26,7 @@ public class Camera {
 	private int widthLimit;
 	private int heightLimit;
 
-	private int tileSize = 64;
+	private int tileSize = 16;
 
 	private Entity e;
 
@@ -65,7 +65,6 @@ public class Camera {
 								.getWorldVarX(GamePanel.WIDTH / 2 - tileSize * 2)) {
 					PlayState.map.setX(PlayState.map.getX() + dx);
 					collisionCam.getPos().setX(collisionCam.getPos().getX() + dx);
-					// bounds.getPos().x += dx;
 				}
 			}
 			if (!e.yCol) {
@@ -75,7 +74,6 @@ public class Camera {
 								.getWorldVarY(GamePanel.HEIGHT / 2 - tileSize * 2)) {
 					PlayState.map.setY(PlayState.map.getY() + dy);
 					collisionCam.getPos().setY(collisionCam.getPos().getY() + dy);
-					// bounds.getPos().y += dy;
 				}
 			}
 		} else {
@@ -228,13 +226,9 @@ public class Camera {
 		 * g.setColor(Color.blue); g.drawRect((int)
 		 * collisionCam.getPos().getWorldVar().x, (int)
 		 * collisionCam.getPos().getWorldVar().y, (int) collisionCam.getWidth(), (int)
-		 * collisionCam.getHeight());
-		 */
-
-		/*
-		 * g.setColor(Color.magenta); g.drawLine(GamePanel.width / 2, 0, GamePanel.width
-		 * / 2, GamePanel.height); g.drawLine(0, GamePanel.height / 2,
-		 * GamePanel.width,GamePanel.height / 2);
+		 * collisionCam.getHeight()); g.setColor(Color.magenta);
+		 * g.drawLine(GamePanel.width / 2, 0, GamePanel.width / 2, GamePanel.height);
+		 * g.drawLine(0, GamePanel.height / 2, GamePanel.width,GamePanel.height / 2);
 		 */
 
 	}
