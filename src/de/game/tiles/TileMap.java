@@ -9,5 +9,7 @@ public abstract class TileMap {
 
 	public abstract void render(Graphics2D g, AABB cam);
 	
+	public abstract void update(AABB cam);
+	
 	public abstract Block[] getBlocks();
 }

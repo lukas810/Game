@@ -2,7 +2,9 @@ package de.game.tiles;
 
 import java.awt.Graphics2D;
 
+import de.game.graphics.Sprite;
 import de.game.graphics.SpriteSheet;
+import de.game.tiles.blocks.AnimatedBlock;
 import de.game.tiles.blocks.Block;
 import de.game.tiles.blocks.NormBlock;
 import de.game.utils.AABB;
@@ -18,7 +20,7 @@ public class TileMapNorm extends TileMap {
 	private int height;
 
 	public TileMapNorm(String data, SpriteSheet sprite, int width, int height, int tileWidth, int tileHeight,
-			int tileColumns) {
+			int tileColumns, int[] animatedTileIDs) {
 
 		blocks = new Block[width * height];
 
@@ -32,12 +34,23 @@ public class TileMapNorm extends TileMap {
 		for (int i = 0; i < (width * height); i++) {
 			int temp = Integer.parseInt(block[i].replaceAll("\\s+", ""));
 			if (temp != 0) {
+				if (temp == 4517) {
+					Sprite[] images = new Sprite[animatedTileIDs.length];
+					for (int j = 0; j < animatedTileIDs.length; j++) {
+						images[j] = sprite.getNewSprite((int) ((animatedTileIDs[j] - 1) % tileColumns),
+								(int) ((animatedTileIDs[j] - 1) / tileColumns));
+					}
+					blocks[i] = new AnimatedBlock(images,
+							new Vector2f((int) (i % width) * tileWidth, (int) (i / height) * tileHeight), tileWidth,
+							tileHeight);
+				} else {
 
-				blocks[i] = new NormBlock(
-						sprite.getNewSprite((int) ((temp - 1) % tileColumns), (int) ((temp - 1) / tileColumns)),
-						new Vector2f((int) (i % width) * tileWidth, (int) (i / height) * tileHeight), tileWidth,
-						tileHeight);
+					blocks[i] = new NormBlock(
+							sprite.getNewSprite((int) ((temp - 1) % tileColumns), (int) ((temp - 1) / tileColumns)),
+							new Vector2f((int) (i % width) * tileWidth, (int) (i / height) * tileHeight), tileWidth,
+							tileHeight);
 
+				}
 			}
 		}
 
@@ -56,9 +69,23 @@ public class TileMapNorm extends TileMap {
 			}
 		}
 	}
+	
+	public void update(AABB cam) {
+		int x = (int) ((cam.getPos().getX()) / tileWidth);
+		int y = (int) ((cam.getPos().getY()) / tileHeight);
+
+		for (int i = x; i < x + (cam.getWidth() / tileWidth); i++) {
+			for (int j = y; j < y + (cam.getHeight() / tileHeight); j++) {
+				if (i + (j * height) > -1 && i + (j * height) < blocks.length && blocks[i + (j * height)] != null) {
+					blocks[i + (j * height)].update(null);
+				}
+			}
+		}
+	}
 
 	@Override
 	public Block[] getBlocks() {
 		return blocks;
 	}
+	
 }

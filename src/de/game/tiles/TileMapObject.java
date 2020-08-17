@@ -64,6 +64,20 @@ public class TileMapObject extends TileMap {
 		}
 	}
 
+	public void update(AABB cam) {
+		int x = (int) ((cam.getPos().getX()) / tileWidth);
+		int y = (int) ((cam.getPos().getY()) / tileHeight);
+
+		for (int i = x; i < x + (cam.getWidth() / tileWidth); i++) {
+			for (int j = y; j < y + (cam.getHeight() / tileHeight); j++) {
+				if (i + (j * height) > -1 && i + (j * height) < eventBlocks.length
+						&& eventBlocks[i + (j * height)] != null) {
+					eventBlocks[i + (j * height)].update(null);
+				}
+			}
+		}
+	}
+
 	@Override
 	public Block[] getBlocks() {
 		return eventBlocks;

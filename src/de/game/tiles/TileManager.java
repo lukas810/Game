@@ -43,11 +43,12 @@ public class TileManager {
 		camera.setTileSize(blockWidth);
 
 		String[] data = new String[3];
+		int[] animatedTileIDs;
+
 		try {
 
 			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = builderFactory.newDocumentBuilder();
-//			Document document = builder.parse(new File(getClass().getClassLoader().getResource(path).toURI()));
 			Document document = builder.parse(getClass().getClassLoader().getResourceAsStream(path));
 			document.getDocumentElement().normalize();
 			NodeList list = document.getElementsByTagName("tileset");
@@ -61,9 +62,22 @@ public class TileManager {
 			tileHeight = Integer.parseInt(element.getAttribute("tileheight"));
 			tileColumns = Integer.parseInt(element.getAttribute("columns"));
 
-			list = document.getElementsByTagName("image");
-
 			sprite = new SpriteSheet("tile/" + imagePath + ".png", tileWidth, tileHeight);
+
+			/*
+			 * TODO HashTable oder int[][] mit tileId die Animation hat und Ids der
+			 * einzelnen Tiles
+			 */
+			list = document.getElementsByTagName("tile");
+
+			list = document.getElementsByTagName("frame");
+			animatedTileIDs = new int[list.getLength()];
+
+			for (int i = 0; i < list.getLength(); i++) {
+				node = list.item(i);
+				element = (Element) node;
+				animatedTileIDs[i] = Integer.parseInt(element.getAttribute("tileid"));
+			}
 
 			list = document.getElementsByTagName("layer");
 			layers = list.getLength();
@@ -81,10 +95,9 @@ public class TileManager {
 				data[i] = element.getElementsByTagName("data").item(0).getTextContent();
 
 				if (i >= 1) {
-					tilemap.add(new TileMapNorm(data[i], sprite, width, height, blockWidth, blockHeight, tileColumns));
+					tilemap.add(new TileMapNorm(data[i], sprite, width, height, blockWidth, blockHeight, tileColumns, animatedTileIDs));
 				} else {
-					tilemap.add(
-							new TileMapObject(data[i], sprite, width, height, blockWidth, blockHeight, tileColumns));
+					tilemap.add(new TileMapObject(data[i], sprite, width, height, blockWidth, blockHeight, tileColumns));
 				}
 
 				camera.setLimit(width * blockWidth, height * blockHeight);
@@ -121,6 +134,15 @@ public class TileManager {
 		}
 		for (int i = 0; i < tilemap.size(); i++) {
 			tilemap.get(i).render(g, camera.getBounds());
+		}
+	}
+	
+	public void update() {
+		if (camera == null) {
+			return;
+		}
+		for (int i = 0; i < tilemap.size(); i++) {
+			tilemap.get(i).update(camera.getBounds());
 		}
 	}
 }

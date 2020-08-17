@@ -13,7 +13,7 @@ public class Animation {
 	private int timesPlayed;
 
 	public Animation(Sprite[] frames) {
-		setFrames(0, frames);
+		setFrames(frames);
 		timesPlayed = 0;
 		states = new int[10];
 	}
@@ -34,6 +34,14 @@ public class Animation {
 		} else {
 			numFrames = states[state];
 		}
+	}
+	public void setFrames(Sprite[] frames) {
+		this.frames = frames;
+		currentFrame = 0;
+		count = 0;
+		timesPlayed = 0;
+		delay = 2;
+		numFrames = frames.length;
 	}
 
 	public void setDelay(int i) {

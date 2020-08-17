@@ -98,6 +98,7 @@ public class PlayState extends GameState {
 
 	@Override
 	public void input(MouseHandler mouse, KeyHandler key) {
+		tileManager.update();
 
 		key.escape.tick();
 
