@@ -64,11 +64,10 @@ public class TileManager {
 
 			sprite = new SpriteSheet("tile/" + imagePath + ".png", tileWidth, tileHeight);
 
-			/*
-			 * TODO HashTable oder int[][] mit tileId die Animation hat und Ids der
-			 * einzelnen Tiles
-			 */
 			list = document.getElementsByTagName("tile");
+			node = list.item(0);
+			element = (Element) node;
+			int animatedTileID = Integer.parseInt(element.getAttribute("id"));
 
 			list = document.getElementsByTagName("frame");
 			animatedTileIDs = new int[list.getLength()];
@@ -78,6 +77,10 @@ public class TileManager {
 				element = (Element) node;
 				animatedTileIDs[i] = Integer.parseInt(element.getAttribute("tileid"));
 			}
+
+			int duration = Integer.parseInt(element.getAttribute("duration"));
+			
+			AnimationTileData animationData = new AnimationTileData(animatedTileID, animatedTileIDs, duration);
 
 			list = document.getElementsByTagName("layer");
 			layers = list.getLength();
@@ -95,9 +98,11 @@ public class TileManager {
 				data[i] = element.getElementsByTagName("data").item(0).getTextContent();
 
 				if (i >= 1) {
-					tilemap.add(new TileMapNorm(data[i], sprite, width, height, blockWidth, blockHeight, tileColumns, animatedTileIDs));
+					tilemap.add(new TileMapNorm(data[i], sprite, width, height, blockWidth, blockHeight, tileColumns,
+							animationData));
 				} else {
-					tilemap.add(new TileMapObject(data[i], sprite, width, height, blockWidth, blockHeight, tileColumns));
+					tilemap.add(
+							new TileMapObject(data[i], sprite, width, height, blockWidth, blockHeight, tileColumns));
 				}
 
 				camera.setLimit(width * blockWidth, height * blockHeight);
@@ -136,7 +141,7 @@ public class TileManager {
 			tilemap.get(i).render(g, camera.getBounds());
 		}
 	}
-	
+
 	public void update() {
 		if (camera == null) {
 			return;

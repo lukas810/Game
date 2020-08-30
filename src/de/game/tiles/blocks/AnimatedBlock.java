@@ -6,9 +6,9 @@ import de.game.utils.Vector2f;
 
 public class AnimatedBlock extends Block {
 
-	public AnimatedBlock(Sprite[] images, Vector2f pos, int width, int height) {
+	public AnimatedBlock(Sprite[] images, Vector2f pos, int width, int height, int duration) {
 		super(images,pos, width, height);
-		ani.setDelay(100);
+		ani.setDelay(duration);
 	}
 
 	@Override

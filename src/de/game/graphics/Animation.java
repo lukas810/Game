@@ -15,7 +15,6 @@ public class Animation {
 	public Animation(Sprite[] frames) {
 		setFrames(frames);
 		timesPlayed = 0;
-		states = new int[10];
 	}
 
 	public Animation() {

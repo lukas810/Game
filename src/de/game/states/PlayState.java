@@ -58,7 +58,7 @@ public class PlayState extends GameState {
 	public void update(double time) {
 		Vector2f.setWorldVar(map.getX(), map.getY());
 		if (!gsm.isStateActive(GameStateManager.PAUSE)) {
-
+			tileManager.update();
 			aabbTree.update(player);
 
 			if (player.getDeath()) {
@@ -98,8 +98,7 @@ public class PlayState extends GameState {
 
 	@Override
 	public void input(MouseHandler mouse, KeyHandler key) {
-		tileManager.update();
-
+		
 		key.escape.tick();
 
 		if (!gsm.isStateActive(GameStateManager.PAUSE)) {

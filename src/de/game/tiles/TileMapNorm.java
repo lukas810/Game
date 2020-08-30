@@ -20,7 +20,7 @@ public class TileMapNorm extends TileMap {
 	private int height;
 
 	public TileMapNorm(String data, SpriteSheet sprite, int width, int height, int tileWidth, int tileHeight,
-			int tileColumns, int[] animatedTileIDs) {
+			int tileColumns, AnimationTileData animationData) {
 
 		blocks = new Block[width * height];
 
@@ -35,14 +35,14 @@ public class TileMapNorm extends TileMap {
 			int temp = Integer.parseInt(block[i].replaceAll("\\s+", ""));
 			if (temp != 0) {
 				if (temp == 4517) {
-					Sprite[] images = new Sprite[animatedTileIDs.length];
-					for (int j = 0; j < animatedTileIDs.length; j++) {
-						images[j] = sprite.getNewSprite((int) ((animatedTileIDs[j] - 1) % tileColumns),
-								(int) ((animatedTileIDs[j] - 1) / tileColumns));
+					Sprite[] images = new Sprite[animationData.getAnimatedTileIDs().length];
+					for (int j = 0; j < animationData.getAnimatedTileIDs().length; j++) {
+						images[j] = sprite.getNewSprite((int) ((animationData.getAnimatedTileIDs()[j] - 1) % tileColumns),
+								(int) ((animationData.getAnimatedTileIDs()[j] - 1) / tileColumns));
 					}
 					blocks[i] = new AnimatedBlock(images,
 							new Vector2f((int) (i % width) * tileWidth, (int) (i / height) * tileHeight), tileWidth,
-							tileHeight);
+							tileHeight,animationData.getDuration());
 				} else {
 
 					blocks[i] = new NormBlock(

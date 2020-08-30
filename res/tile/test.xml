@@ -4,9 +4,9 @@
   <image source="test.png" width="1793" height="1152"/>
   <tile id="4517">
    <animation>
-    <frame tileid="4517" duration="1000"/>
-    <frame tileid="4518" duration="1000"/>
-    <frame tileid="4519" duration="1000"/>
+    <frame tileid="4517" duration="100"/>
+    <frame tileid="4518" duration="100"/>
+    <frame tileid="4519" duration="100"/>
    </animation>
   </tile>
  </tileset>
