@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
-import de.game.utils.Vector2f;
+import de.game.utils.Vector2;
 
 public class SpriteSheet {
 
@@ -116,10 +116,6 @@ public class SpriteSheet {
 		}
 	}
 
-	public void setEffect(Sprite.effect e) {
-		spritesheet.setEffect(e);
-	}
-
 	public Sprite getSpriteSheet() {
 		return spritesheet;
 	}
@@ -148,7 +144,7 @@ public class SpriteSheet {
 		return spriteArray;
 	}
 
-	public static void drawArray(Graphics2D g, ArrayList<Sprite> img, Vector2f pos, int width, int height, int xOffset,
+	public static void drawArray(Graphics2D g, ArrayList<Sprite> img, Vector2 pos, int width, int height, int xOffset,
 			int yOffset) {
 		float x = pos.getX();
 		float y = pos.getY();
@@ -163,23 +159,23 @@ public class SpriteSheet {
 		}
 	}
 
-	public static void drawArray(Graphics2D g, String word, Vector2f pos, int size) {
+	public static void drawArray(Graphics2D g, String word, Vector2 pos, int size) {
 		drawArray(g, currentFont, word, pos, size, size, size, 0);
 	}
 
-	public static void drawArray(Graphics2D g, String word, Vector2f pos, int size, int xOffset) {
+	public static void drawArray(Graphics2D g, String word, Vector2 pos, int size, int xOffset) {
 		drawArray(g, currentFont, word, pos, size, size, xOffset, 0);
 	}
 
-	public static void drawArray(Graphics2D g, String word, Vector2f pos, int width, int height, int xOffset) {
+	public static void drawArray(Graphics2D g, String word, Vector2 pos, int width, int height, int xOffset) {
 		drawArray(g, currentFont, word, pos, width, height, xOffset, 0);
 	}
 
-	public static void drawArray(Graphics2D g, Font f, String word, Vector2f pos, int size, int xOffset) {
+	public static void drawArray(Graphics2D g, Font f, String word, Vector2 pos, int size, int xOffset) {
 		drawArray(g, f, word, pos, size, size, xOffset, 0);
 	}
 
-	public static void drawArray(Graphics2D g, Font f, String word, Vector2f pos, int width, int height, int xOffset,
+	public static void drawArray(Graphics2D g, Font f, String word, Vector2 pos, int width, int height, int xOffset,
 			int yOffset) {
 		float x = pos.getX();
 		float y = pos.getY();

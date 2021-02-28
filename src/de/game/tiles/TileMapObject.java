@@ -5,8 +5,7 @@ import java.awt.Graphics2D;
 import de.game.graphics.SpriteSheet;
 import de.game.tiles.blocks.Block;
 import de.game.tiles.blocks.ObjectBlock;
-import de.game.utils.AABB;
-import de.game.utils.Vector2f;
+import de.game.utils.Vector2;
 
 public class TileMapObject extends TileMap {
 
@@ -39,7 +38,7 @@ public class TileMapObject extends TileMap {
 
 				tempBlock = new ObjectBlock(
 						sprite.getSprite((int) ((temp - 1) % tileColumns), (int) ((temp - 1) / tileColumns)),
-						new Vector2f((int) (i % width) * tileWidth, (int) (i / height) * tileHeight), tileWidth,
+						new Vector2((int) (i % width) * tileWidth, (int) (i / height) * tileHeight), tileWidth,
 						tileHeight);
 
 				eventBlocks[i] = tempBlock;
@@ -49,33 +48,33 @@ public class TileMapObject extends TileMap {
 	}
 
 	@Override
-	public void render(Graphics2D g, AABB cam) {
-		int x = (int) ((cam.getPos().getX()) / tileWidth);
-		int y = (int) ((cam.getPos().getY()) / tileHeight);
-
-		for (int i = x; i < x + (cam.getWidth() / tileWidth); i++) {
-			for (int j = y; j < y + (cam.getHeight() / tileHeight); j++) {
-				if (i + (j * height) > -1 && i + (j * height) < eventBlocks.length
-						&& eventBlocks[i + (j * height)] != null) {
-
-					eventBlocks[i + (j * height)].render(g);
-				}
-			}
-		}
+	public void render(Graphics2D g) {
+//		int x = (int) ((cam.getPos().getX()) / tileWidth);
+//		int y = (int) ((cam.getPos().getY()) / tileHeight);
+//
+//		for (int i = x; i < x + (cam.getWidth() / tileWidth); i++) {
+//			for (int j = y; j < y + (cam.getHeight() / tileHeight); j++) {
+//				if (i + (j * height) > -1 && i + (j * height) < eventBlocks.length
+//						&& eventBlocks[i + (j * height)] != null) {
+//
+//					eventBlocks[i + (j * height)].render(g);
+//				}
+//			}
+//		}
 	}
 
-	public void update(AABB cam) {
-		int x = (int) ((cam.getPos().getX()) / tileWidth);
-		int y = (int) ((cam.getPos().getY()) / tileHeight);
-
-		for (int i = x; i < x + (cam.getWidth() / tileWidth); i++) {
-			for (int j = y; j < y + (cam.getHeight() / tileHeight); j++) {
-				if (i + (j * height) > -1 && i + (j * height) < eventBlocks.length
-						&& eventBlocks[i + (j * height)] != null) {
-					eventBlocks[i + (j * height)].update(null);
-				}
-			}
-		}
+	public void update() {
+//		int x = (int) ((cam.getPos().getX()) / tileWidth);
+//		int y = (int) ((cam.getPos().getY()) / tileHeight);
+//
+//		for (int i = x; i < x + (cam.getWidth() / tileWidth); i++) {
+//			for (int j = y; j < y + (cam.getHeight() / tileHeight); j++) {
+//				if (i + (j * height) > -1 && i + (j * height) < eventBlocks.length
+//						&& eventBlocks[i + (j * height)] != null) {
+//					eventBlocks[i + (j * height)].update(null);
+//				}
+//			}
+//		}
 	}
 
 	@Override

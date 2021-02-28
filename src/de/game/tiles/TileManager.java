@@ -13,24 +13,22 @@ import org.w3c.dom.NodeList;
 
 import de.game.graphics.SpriteSheet;
 import de.game.tiles.blocks.NormBlock;
-import de.game.utils.Camera;
 
 public class TileManager {
 
 	public static ArrayList<TileMap> tilemap;
 
-	private Camera camera;
+//	private Camera camera;
 
 	private int width;
 	private int height;
 
-	public TileManager(String path, Camera camera) {
+	public TileManager(String path) {
 		tilemap = new ArrayList<TileMap>();
-		addTileMap(path, 16, 16, camera);
+		addTileMap(path, 16, 16);
 	}
 
-	private void addTileMap(String path, int blockWidth, int blockHeight, Camera camera) {
-		this.camera = camera;
+	private void addTileMap(String path, int blockWidth, int blockHeight) {
 		String imagePath;
 		int width = 0;
 		int height = 0;
@@ -40,7 +38,6 @@ public class TileManager {
 		int layers = 0;
 		SpriteSheet sprite;
 
-		camera.setTileSize(blockWidth);
 
 		String[] data = new String[3];
 		int[] animatedTileIDs;
@@ -105,7 +102,6 @@ public class TileManager {
 							new TileMapObject(data[i], sprite, width, height, blockWidth, blockHeight, tileColumns));
 				}
 
-				camera.setLimit(width * blockWidth, height * blockHeight);
 			}
 
 		} catch (Exception e) {
@@ -134,20 +130,20 @@ public class TileManager {
 	}
 
 	public void render(Graphics2D g) {
-		if (camera == null) {
-			return;
-		}
-		for (int i = 0; i < tilemap.size(); i++) {
-			tilemap.get(i).render(g, camera.getBounds());
-		}
+//		if (camera == null) {
+//			return;
+//		}
+//		for (int i = 0; i < tilemap.size(); i++) {
+//			tilemap.get(i).render(g, camera.getBounds());
+//		}
 	}
 
 	public void update() {
-		if (camera == null) {
-			return;
-		}
-		for (int i = 0; i < tilemap.size(); i++) {
-			tilemap.get(i).update(camera.getBounds());
-		}
+//		if (camera == null) {
+//			return;
+//		}
+//		for (int i = 0; i < tilemap.size(); i++) {
+//			tilemap.get(i).update(camera.getBounds());
+//		}
 	}
 }

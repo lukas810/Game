@@ -2,42 +2,27 @@ package de.game.states;
 
 import java.awt.Graphics2D;
 
-import de.game.GamePanel;
-import de.game.graphics.SpriteSheet;
-import de.game.utils.AABB;
-import de.game.utils.Camera;
-//import de.game.graphics.Font;
 import de.game.utils.KeyHandler;
 import de.game.utils.MouseHandler;
-import de.game.utils.Vector2f;
+import de.game.utils.Vector2;
 
 public class GameStateManager {
 
 	private GameState[] states;
 
-	public static Vector2f map;
+	public static Vector2 map;
 
 	public static final int MENU = 0;
 	public static final int PLAY = 1;
 	public static final int PAUSE = 2;
 	public static final int GAMEOVER = 3;
 	
-	public static Camera camera;
     public static Graphics2D g;
     
-    public static SpriteSheet button;
-
-
 	public GameStateManager(Graphics2D g) {
 		GameStateManager.g = g;
-		map = new Vector2f(GamePanel.WIDTH, GamePanel.HEIGHT);
-		Vector2f.setWorldVar(map.getX(), map.getY());
 		states = new GameState[4];
 		
-		button = new SpriteSheet("ui/buttons.png", 122, 57);
-		
-		camera = new Camera(new AABB(new Vector2f(-32, -32), GamePanel.WIDTH + 64, GamePanel.HEIGHT + 64));
-
 		add(PLAY);
 	}
 
@@ -50,27 +35,22 @@ public class GameStateManager {
 			return;
 		}
 		if (state == PLAY) {
-			camera = new Camera(new AABB(new Vector2f(-64, -64), GamePanel.WIDTH + 128, GamePanel.HEIGHT + 128));
-			states[PLAY] = new PlayState(this, camera);
+			states[PLAY] = new PlayState(this);
 		}
-		if (state == MENU) {
-			states[MENU] = new MenuState(this);
-		}
-		if (state == PAUSE) {
-			states[PAUSE] = new PauseState(this);
-		}
-		if (state == GAMEOVER) {
-			states[GAMEOVER] = new GameOverState(this);
-		}
+//		if (state == MENU) {
+//			states[MENU] = new MenuState(this);
+//		}
+//		if (state == PAUSE) {
+//			states[PAUSE] = new PauseState(this);
+//		}
+//		if (state == GAMEOVER) {
+//			states[GAMEOVER] = new GameOverState(this);
+//		}
 	}
 	
 	  public boolean isStateActive(int state) {
 	        return states[state] != null;
 	    }
-
-	public void addAndRemove(int state) {
-		addAndRemove(state, 0);
-	}
 
 	public void addAndRemove(int state, int remove) {
 		remove(state);

@@ -4,8 +4,7 @@ import java.awt.Graphics2D;
 
 import de.game.graphics.Animation;
 import de.game.graphics.Sprite;
-import de.game.utils.AABB;
-import de.game.utils.Vector2f;
+import de.game.utils.Vector2;
 
 public abstract class Block {
 
@@ -14,13 +13,13 @@ public abstract class Block {
 
 	protected Sprite image;
 
-	protected Vector2f pos;
+	protected Vector2 pos;
 
 	protected boolean isAnimated;
 
 	protected Animation ani;
 
-	public Block(Sprite image, Vector2f pos, int width, int height) {
+	public Block(Sprite image, Vector2 pos, int width, int height) {
 		this.image = image;
 		this.pos = pos;
 		this.width = width;
@@ -30,7 +29,7 @@ public abstract class Block {
 
 	}
 
-	public Block(Sprite[] images, Vector2f pos, int width, int height) {
+	public Block(Sprite[] images, Vector2 pos, int width, int height) {
 		this.pos = pos;
 		this.width = width;
 		this.height = height;
@@ -39,21 +38,21 @@ public abstract class Block {
 		ani = new Animation(images);
 	}
 
-	public abstract boolean update(AABB p);
+	public abstract boolean update();
 
 	public void render(Graphics2D g) {
-		if (isAnimated) {
-			g.drawImage(ani.getImage().image, (int) pos.getWorldVar().getX(), (int) pos.getWorldVar().getY(), width,
-					height, null);
-		} else {
-			g.drawImage(image.image, (int) pos.getWorldVar().getX(), (int) pos.getWorldVar().getY(), width, height,
-					null);
-		}
+//		if (isAnimated) {
+//			g.drawImage(ani.getImage().image, (int) pos.getWorldVar().getX(), (int) pos.getWorldVar().getY(), width,
+//					height, null);
+//		} else {
+//			g.drawImage(image.image, (int) pos.getWorldVar().getX(), (int) pos.getWorldVar().getY(), width, height,
+//					null);
+//		}
 	}
 
 	public abstract Sprite getImage();
 
-	public Vector2f getPos() {
+	public Vector2 getPos() {
 		return pos;
 	}
 

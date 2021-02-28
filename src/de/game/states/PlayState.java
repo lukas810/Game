@@ -1,151 +1,69 @@
 package de.game.states;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 
+import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.World;
+
 import de.game.GamePanel;
-import de.game.entity.Enemy;
+import de.game.entity.Boundary;
 import de.game.entity.Player;
-import de.game.entity.enemies.Girl;
 import de.game.graphics.Font;
 import de.game.graphics.SpriteSheet;
-import de.game.tiles.TileManager;
-import de.game.utils.AABBTree;
-import de.game.utils.Camera;
-import de.game.utils.GameObjectHeap;
 import de.game.utils.KeyHandler;
 import de.game.utils.MouseHandler;
-import de.game.utils.Vector2f;
+import de.game.utils.Vector2;
 
 public class PlayState extends GameState {
 
-	private Font font;
+	private World world;
+	private float timeStep = 1.0f / 60.0f;
+	private int velocityIterations = 8;
+	private int positionIterations = 3;
+
 	private Player player;
-	private TileManager tileManager;
-	private Camera camera;
-	private GameObjectHeap gameObjectHeap;
-	private AABBTree aabbTree;
-	private double heaptime;
+	
+	private Boundary test;
 
-	public static Vector2f map;
+	private Font font;
 
-	public PlayState(GameStateManager gsm, Camera camera) {
+	public PlayState(GameStateManager gsm) {
 		super(gsm);
 
-		map = new Vector2f();
-		Vector2f.setWorldVar(map.getX(), map.getY());
-
-		this.camera = camera;
-		tileManager = new TileManager("tile/test.xml", camera);
+		setupWorld();
+		
 		font = new Font("font/font.png", 10, 10);
 
-		gameObjectHeap = new GameObjectHeap();
-		aabbTree = new AABBTree();
-
-		player = new Player(new SpriteSheet("entity/link.png", 32, 32),
-				new Vector2f(GamePanel.WIDTH / 2 - 48, GamePanel.HEIGHT / 2 - 16), 64, tileManager);
-		aabbTree.insert(player);
-		for (int i = 0; i < 1; i++) {
-			Enemy enemy = new Girl(new SpriteSheet("entity/enemy.png", 48, 48), new Vector2f(400, 40 * i + 20), 64,
-					camera);
-
-			gameObjectHeap.add(enemy.getBounds().distance(player.getPos()), enemy);
-			aabbTree.insert(enemy);
-		}
-		camera.target(player);
+		player = new Player(new Vector2(GamePanel.WIDTH / 2 - 48, GamePanel.HEIGHT / 2 - 16), 64, 64,
+				new SpriteSheet("entity/link.png", 32, 32), world);
+		
+		test = new Boundary(300, 400, 400, 10, Color.BLUE, world);
 	}
+
 
 	@Override
 	public void update(double time) {
-		Vector2f.setWorldVar(map.getX(), map.getY());
-		if (!gsm.isStateActive(GameStateManager.PAUSE)) {
-			tileManager.update();
-			aabbTree.update(player);
-
-			if (player.getDeath()) {
-				gsm.add(GameStateManager.GAMEOVER);
-//				gsm.remove(GameStateManager.PLAY);
-			}
-
-			for (int i = 0; i < gameObjectHeap.size(); i++) {
-				if (gameObjectHeap.get(i).go instanceof Enemy) {
-					Enemy enemy = ((Enemy) gameObjectHeap.get(i).go);
-					if (player.getHitBounds().collides(enemy.getBounds())) {
-						player.setTargetEnemy(enemy);
-					}else {
-						player.removeTargetEnemy(enemy);
-					}
-
-					if (enemy.getDeath()) {
-						gameObjectHeap.remove(enemy);
-					} else {
-						enemy.update(player, time);
-					}
-
-					if (canBuildHeap(2500, 1000000, time)) {
-						gameObjectHeap.get(i).value = enemy.getBounds().distance(player.getPos());
-					}
-
-					continue;
-				}
-
-			}
-
-			player.update(time);
-			camera.update();
-
-		}
-	}
-
-	@Override
-	public void input(MouseHandler mouse, KeyHandler key) {
-		
-		key.escape.tick();
-
-		if (!gsm.isStateActive(GameStateManager.PAUSE)) {
-			if (camera.getTarget() == player) {
-				player.input(mouse, key);
-			}
-			camera.input(mouse, key);
-		}
-
-		if (key.escape.clicked) {
-			if (gsm.isStateActive(GameStateManager.PAUSE)) {
-				gsm.remove(GameStateManager.PAUSE);
-			} else {
-				gsm.add(GameStateManager.PAUSE);
-			}
-		}
+		world.step(timeStep, velocityIterations, positionIterations);
+		player.update(time);
 	}
 
 	@Override
 	public void render(Graphics2D g) {
-		tileManager.render(g);
+		SpriteSheet.drawArray(g, font, GamePanel.oldFrameCount + "FPS", new Vector2(GamePanel.WIDTH - 180, 40), 25, 25,
+				25, 0);
 		player.render(g);
-		for (int i = 0; i < gameObjectHeap.size(); i++) {
-			if (camera.getBounds().collides(gameObjectHeap.get(i).getBounds())) {
-				gameObjectHeap.get(i).go.render(g);
-			}
-		}
-		camera.render(g);
-		SpriteSheet.drawArray(g, font, GamePanel.oldFrameCount + " FPS", new Vector2f(GamePanel.WIDTH - 180, 40), 25,
-				25, 25, 0);
+		test.render(g);
 	}
 
-	private boolean canBuildHeap(int offset, int si, double time) {
-
-		if (gameObjectHeap.size() > 3 && (heaptime / si) + offset < (time / si)) {
-			return true;
-		}
-
-		return false;
+	@Override
+	public void input(MouseHandler mouse, KeyHandler key) {
+		player.input(mouse, key);
 	}
-
-	public GameObjectHeap getGameObjectHeap() {
-		return gameObjectHeap;
+	
+	private void setupWorld() {
+		world = new World(new Vec2(0, 0));
+		world.setWarmStarting(true);
+		world.setContinuousPhysics(true);
 	}
-
-	public AABBTree getAABBObjects() {
-		return aabbTree;
-	}
-
 }

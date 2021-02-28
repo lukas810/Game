@@ -2,147 +2,82 @@ package de.game.entity;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.util.ArrayList;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 
-import de.game.GamePanel;
+import org.jbox2d.collision.shapes.PolygonShape;
+import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.BodyDef;
+import org.jbox2d.dynamics.BodyType;
+import org.jbox2d.dynamics.FixtureDef;
+import org.jbox2d.dynamics.World;
+
 import de.game.graphics.SpriteSheet;
-import de.game.tiles.TileManager;
-import de.game.tiles.blocks.NormBlock;
 import de.game.utils.KeyHandler;
 import de.game.utils.MouseHandler;
-import de.game.utils.Vector2f;
-import de.game.graphics.Sprite;;
+import de.game.utils.Vector2;
+import de.game.jbox2d.JBox2DHelper;
 
 public class Player extends Entity {
 
-	private ArrayList<Enemy> enemy;
-	private ArrayList<GameObject> go;
-	private TileManager tm;
+	private Body body;
 
-	public Player(SpriteSheet sprite, Vector2f origin, int size, TileManager tm) {
-		super(sprite, origin, size);
-		this.tm = tm;
+	public Player(Vector2 pos, float width, float height, SpriteSheet spriteSheet, World world) {
+		super(pos, width, height, spriteSheet);
 
-		maxSpeed = 2.5f;
-		acc = 0.7f;
-		deacc = 0.7f;
-
-		bounds.setWidth(42);
-		bounds.setHeight(20);
-		bounds.setxOffset(12);
-		bounds.setyOffset(40);
-
-		hitBounds.setWidth(42);
-		hitBounds.setHeight(42);
+		maxSpeed = 100f;
+		acc = 2f;
+		deacc = 10f;
 
 		ani.setNumFrames(8, RIGHT);
 		ani.setNumFrames(8, LEFT);
 		ani.setNumFrames(8, UP);
 		ani.setNumFrames(8, DOWN);
-		ani.setNumFrames(8, ATTACK + RIGHT);
-		ani.setNumFrames(8, ATTACK + LEFT);
-		ani.setNumFrames(8, ATTACK + UP);
-		ani.setNumFrames(8, ATTACK + DOWN);
+//		ani.setNumFrames(8, ATTACK + RIGHT);
+//		ani.setNumFrames(8, ATTACK + LEFT);
+//		ani.setNumFrames(8, ATTACK + UP);
+//		ani.setNumFrames(8, ATTACK + DOWN);
 
-		enemy = new ArrayList<Enemy>();
-		go = new ArrayList<GameObject>();
+		BodyDef bodyDef = new BodyDef();
+		bodyDef.type = BodyType.DYNAMIC;
+		bodyDef.position.set(JBox2DHelper.coordsPixelToWorld(pos.x, pos.y));
+		body = world.createBody(bodyDef);
+		PolygonShape box = new PolygonShape();
+		float box2dWidth = JBox2DHelper.scalarPixelsToWorld(width / 2);
+		float box2dHeight = JBox2DHelper.scalarPixelsToWorld(height / 2);
+		box.setAsBox(box2dWidth, box2dHeight);
+		FixtureDef fixtureDef = new FixtureDef();
+		fixtureDef.shape = box;
+		fixtureDef.density = 1;
+		fixtureDef.friction = 0.3f;
+		fixtureDef.restitution = 1;
 
-		hasIdle = false;
-		health = 100;
-		maxHealth = 100;
-		damage = 10;
+		body.createFixture(fixtureDef);
+//		body.setUserData(this);
 
 	}
-	
-	public void setTargetEnemy(Enemy enemy) { 
-        this.enemy.add(enemy);
-    }
-	
-	public void removeTargetEnemy(Enemy enemy) {
-		this.enemy.remove(enemy);
-	}
 
-    public void setTargetGameObject(GameObject go) {
-        if(!this.go.contains(go))
-            this.go.add(go);
-    }
-
-    @Override
+	@Override
 	public void update(double time) {
 		super.update(time);
-		attacking = isAttacking(time);
-		for (int i = 0; i < enemy.size(); i++) {
-			if (attacking) {
-				enemy.get(i).setHealth(enemy.get(i).getHealth() - damage, force * getDirection(),
-						currentDirection == UP || currentDirection == DOWN);
-				if(enemy.get(i).getHealth() <= 0) {
-					enemy.remove(i);
-				}
-			}
-		}
-
 		move();
-		if (!tc.tileCollision(dx, 0) && !bounds.collides(dx, 0, go)) {
-
-			pos.setX(pos.getX() + dx);
-			xCol = false;
-
-		} else {
-			xCol = true;
-		}
-		if (!tc.tileCollision(0, dy) && !bounds.collides(0, dy, go)) {
-			pos.setY(pos.getY() + dy);
-			yCol = false;
-		} else {
-			yCol = true;
-		}
-		
-		tc.normalTile(dx, 0);
-        tc.normalTile(0, dy);
-        
-        NormBlock[] block = tm.getNormalTile(tc.getTile());
-        for(int i = 0; i < block.length; i++) {
-            if(block[i] != null)
-                block[i].getImage().restoreDefault();
-        }
 	}
 
 	@Override
 	public void render(Graphics2D g) {
+		Vector2 pos = JBox2DHelper.coordsWorldToPixel(body.getPosition().x, body.getPosition().y);
+		AffineTransform transform = new AffineTransform();
+		transform.translate((int) (pos.getX()), (int) (pos.getY()));
+		g.transform(transform);
+		g.drawImage(ani.getImage().image, (int) -width / 2, (int) -height / 2, (int) width, (int) height, null);
 		g.setColor(Color.BLUE);
-		g.drawRect((int) (pos.getWorldVar().getX() + bounds.getxOffset()),
-				(int) (pos.getWorldVar().getY() + bounds.getyOffset()), (int) bounds.getWidth(),
-				(int) bounds.getHeight());
+		g.drawRect((int) -width / 2, (int) -height / 2, (int) width, (int) height);
 
-		if (attack) {
-			g.setColor(Color.RED);
-			g.drawRect((int) (hitBounds.getPos().getWorldVar().getX() + hitBounds.getxOffset()),
-					(int) (hitBounds.getPos().getWorldVar().getY() + hitBounds.getyOffset()),
-					(int) hitBounds.getWidth(), (int) hitBounds.getHeight());
+		try {
+			g.transform(transform.createInverse());
+		} catch (NoninvertibleTransformException e) {
+			e.printStackTrace();
 		}
-		
-		if(isInvincible) {
-            if(GamePanel.tickCount % 30 >= 15) {
-                ani.getImage().setEffect(Sprite.effect.REDISH);
-            } else {
-                ani.getImage().restoreColors();
-            }
-        } else {
-            ani.getImage().restoreColors();
-        }
-		if(useRight && left) {
-            g.drawImage(ani.getImage().image, (int) (pos.getWorldVar().getX()) + size, (int) (pos.getWorldVar().getY()), -size, size, null);
-        } else {
-            g.drawImage(ani.getImage().image, (int) (pos.getWorldVar().getX()), (int) (pos.getWorldVar().getY()), size, size, null);
-        }
-		
-		g.setColor(Color.red);
-		g.fillRect((int) (pos.getWorldVar().getX() + bounds.getxOffset() +5), (int) (pos.getWorldVar().getY()),
-				24, 5);
-
-		g.setColor(Color.green);
-		g.fillRect((int) (pos.getWorldVar().getX() + bounds.getxOffset() +5), (int) (pos.getWorldVar().getY()),
-				(int) (24 * healthpercent), 5);
 	}
 
 	public void input(MouseHandler mouse, KeyHandler key) {
@@ -167,14 +102,7 @@ public class Player extends Entity {
 		} else {
 			right = false;
 		}
-		if (key.attack.down && canAttack) {
-			attack = true;
-			attacktime = System.nanoTime();
-		} else {
-			if (!attacking) {
-				attack = false;
-			}
-		}
+
 		// moonwalking
 		if (up && down) {
 			up = false;
@@ -186,6 +114,69 @@ public class Player extends Entity {
 			left = false;
 		}
 
+	}
+
+	public void move() {
+		if (up) {
+			currentDirection = UP;
+			dy -= acc;
+			if (dy < -maxSpeed) {
+				dy = -maxSpeed;
+			}
+		} else {
+			if (dy < 0) {
+				dy += deacc;
+				if (dy > 0) {
+					dy = 0;
+				}
+			}
+		}
+
+		if (down) {
+			currentDirection = DOWN;
+			dy += acc;
+			if (dy > maxSpeed) {
+				dy = maxSpeed;
+			}
+		} else {
+			if (dy > 0) {
+				dy -= deacc;
+				if (dy < 0) {
+					dy = 0;
+				}
+			}
+		}
+
+		if (left) {
+			currentDirection = LEFT;
+			dx -= acc;
+			if (dx < -maxSpeed) {
+				dx = -maxSpeed;
+			}
+		} else {
+			if (dx < 0) {
+				dx += deacc;
+				if (dx > 0) {
+					dx = 0;
+				}
+			}
+		}
+
+		if (right) {
+			currentDirection = RIGHT;
+			dx += acc;
+			if (dx > maxSpeed) {
+				dx = maxSpeed;
+			}
+		} else {
+			if (dx > 0) {
+				dx -= deacc;
+				if (dx < 0) {
+					dx = 0;
+				}
+			}
+		}
+		body.setLinearVelocity(JBox2DHelper.vectorPixelsToWorld(dx, dy));
 	}
 
 }

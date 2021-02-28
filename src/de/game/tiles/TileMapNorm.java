@@ -7,8 +7,7 @@ import de.game.graphics.SpriteSheet;
 import de.game.tiles.blocks.AnimatedBlock;
 import de.game.tiles.blocks.Block;
 import de.game.tiles.blocks.NormBlock;
-import de.game.utils.AABB;
-import de.game.utils.Vector2f;
+import de.game.utils.Vector2;
 
 public class TileMapNorm extends TileMap {
 
@@ -41,13 +40,13 @@ public class TileMapNorm extends TileMap {
 								(int) ((animationData.getAnimatedTileIDs()[j] - 1) / tileColumns));
 					}
 					blocks[i] = new AnimatedBlock(images,
-							new Vector2f((int) (i % width) * tileWidth, (int) (i / height) * tileHeight), tileWidth,
+							new Vector2((int) (i % width) * tileWidth, (int) (i / height) * tileHeight), tileWidth,
 							tileHeight,animationData.getDuration());
 				} else {
 
 					blocks[i] = new NormBlock(
 							sprite.getNewSprite((int) ((temp - 1) % tileColumns), (int) ((temp - 1) / tileColumns)),
-							new Vector2f((int) (i % width) * tileWidth, (int) (i / height) * tileHeight), tileWidth,
+							new Vector2((int) (i % width) * tileWidth, (int) (i / height) * tileHeight), tileWidth,
 							tileHeight);
 
 				}
@@ -57,30 +56,30 @@ public class TileMapNorm extends TileMap {
 	}
 
 	@Override
-	public void render(Graphics2D g, AABB cam) {
-		int x = (int) ((cam.getPos().getX()) / tileWidth);
-		int y = (int) ((cam.getPos().getY()) / tileHeight);
-
-		for (int i = x; i < x + (cam.getWidth() / tileWidth); i++) {
-			for (int j = y; j < y + (cam.getHeight() / tileHeight); j++) {
-				if (i + (j * height) > -1 && i + (j * height) < blocks.length && blocks[i + (j * height)] != null) {
-					blocks[i + (j * height)].render(g);
-				}
-			}
-		}
+	public void render(Graphics2D g) {
+//		int x = (int) ((cam.getPos().getX()) / tileWidth);
+//		int y = (int) ((cam.getPos().getY()) / tileHeight);
+//
+//		for (int i = x; i < x + (cam.getWidth() / tileWidth); i++) {
+//			for (int j = y; j < y + (cam.getHeight() / tileHeight); j++) {
+//				if (i + (j * height) > -1 && i + (j * height) < blocks.length && blocks[i + (j * height)] != null) {
+//					blocks[i + (j * height)].render(g);
+//				}
+//			}
+//		}
 	}
 	
-	public void update(AABB cam) {
-		int x = (int) ((cam.getPos().getX()) / tileWidth);
-		int y = (int) ((cam.getPos().getY()) / tileHeight);
-
-		for (int i = x; i < x + (cam.getWidth() / tileWidth); i++) {
-			for (int j = y; j < y + (cam.getHeight() / tileHeight); j++) {
-				if (i + (j * height) > -1 && i + (j * height) < blocks.length && blocks[i + (j * height)] != null) {
-					blocks[i + (j * height)].update(null);
-				}
-			}
-		}
+	public void update() {
+//		int x = (int) ((cam.getPos().getX()) / tileWidth);
+//		int y = (int) ((cam.getPos().getY()) / tileHeight);
+//
+//		for (int i = x; i < x + (cam.getWidth() / tileWidth); i++) {
+//			for (int j = y; j < y + (cam.getHeight() / tileHeight); j++) {
+//				if (i + (j * height) > -1 && i + (j * height) < blocks.length && blocks[i + (j * height)] != null) {
+//					blocks[i + (j * height)].update();
+//				}
+//			}
+//		}
 	}
 
 	@Override
