@@ -1,11 +1,14 @@
 package de.game.entity;
 
-import de.game.graphics.Animation;
-import de.game.graphics.SpriteSheet;
-import de.game.graphics.Sprite;
-import de.game.utils.Vector2;
-
 import java.awt.Graphics2D;
+
+import org.jbox2d.dynamics.World;
+
+import de.game.graphics.Animation;
+import de.game.graphics.Sprite;
+import de.game.graphics.SpriteSheet;
+import de.game.jbox2d.JBox2DHelper;
+import de.game.utils.Vector2;
 
 public abstract class Entity extends GameObject {
 
@@ -22,7 +25,7 @@ public abstract class Entity extends GameObject {
 	protected boolean left = false;
 	protected boolean attack = false;
 
-//	protected boolean hasIdle = false;
+	protected boolean hasIdle = false;
 
 	protected float dx;
 	protected float dy;
@@ -35,8 +38,8 @@ public abstract class Entity extends GameObject {
 	protected int currentDirection = DOWN;
 	protected Animation ani;
 
-	public Entity(Vector2 pos, float width, float height, SpriteSheet spriteSheet) {
-		super(pos, width, height, spriteSheet);
+	public Entity(Vector2 pos, float width, float height, SpriteSheet spriteSheet, World world) {
+		super(pos, width, height, spriteSheet, world);
 
 		ani = new Animation();
 		setAnimation(DOWN, spriteSheet.getSpriteArray(DOWN), 10);
@@ -80,6 +83,21 @@ public abstract class Entity extends GameObject {
 	public void move() {
 		if (up) {
 			currentDirection = UP;
+			dy -= acc;
+			if (dy < -maxSpeed) {
+				dy = -maxSpeed;
+			}
+		} else {
+			if (dy < 0) {
+				dy += deacc;
+				if (dy > 0) {
+					dy = 0;
+				}
+			}
+		}
+
+		if (down) {
+			currentDirection = DOWN;
 			dy += acc;
 			if (dy > maxSpeed) {
 				dy = maxSpeed;
@@ -88,21 +106,6 @@ public abstract class Entity extends GameObject {
 			if (dy > 0) {
 				dy -= deacc;
 				if (dy < 0) {
-					dy = 0;
-				}
-			}
-		}
-
-		if (down) {
-			currentDirection = DOWN;
-			dy -= acc;
-			if (dy < -maxSpeed) {
-				dy = maxSpeed;
-			}
-		} else {
-			if (dy < 0) {
-				dy += deacc;
-				if (dy > 0) {
 					dy = 0;
 				}
 			}
@@ -137,6 +140,7 @@ public abstract class Entity extends GameObject {
 				}
 			}
 		}
+		body.setLinearVelocity(JBox2DHelper.vectorPixelsToWorld(dx, dy));
 	}
 
 	public void update(double time) {

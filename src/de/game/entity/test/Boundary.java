@@ -1,4 +1,4 @@
-package de.game.entity;
+package de.game.entity.test;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
